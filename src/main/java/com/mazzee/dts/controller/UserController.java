@@ -34,9 +34,10 @@ public class UserController {
 		this.userService = userService;
 	}
 
-	@PostMapping(value = "/login", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE })
+	@PostMapping(value = "/login", consumes = {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<User> login(@RequestBody User user) throws RecordNotFoundException {
 		ResponseEntity<User> responseEntity = null;
+		System.out.println("username - " + user.getUserName() + "  " + "password" + user.getPassword());
 		Supplier<RecordNotFoundException> recordNotFoundException = () -> new RecordNotFoundException(
 				new ApiError(HttpStatus.FORBIDDEN.value(), "User name / password is incorrect"));
 		User loggedInUser = userService.login(user).orElseThrow(recordNotFoundException);
