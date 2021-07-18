@@ -10,10 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity
 @Table(name = "dts_user")
-@JsonIgnoreProperties(value = {"password"})
+//@JsonIgnoreProperties(value = {"password"})
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +35,7 @@ public class User {
 	private String email;
 	@Column(name = "user_name")
 	private String userName;
+	@JsonProperty(access = Access.WRITE_ONLY)
 	@Column(name = "password")
 	private String password;
 	@Column(name = "shop_name")
