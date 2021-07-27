@@ -5,6 +5,8 @@ package com.mazzee.dts.controller;
 
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +28,7 @@ import com.mazzee.dts.utils.RecordNotFoundException;
 @RestController
 @RequestMapping("user")
 public class UserController {
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 	private UserService userService;
 
@@ -34,13 +37,14 @@ public class UserController {
 		this.userService = userService;
 	}
 
-	@PostMapping(value = "/login", consumes = {MediaType.APPLICATION_JSON_VALUE})
+	@PostMapping(value = "/login", consumes = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<User> login(@RequestBody User user) throws RecordNotFoundException {
+		LOGGER.info("Login initiated");
 		ResponseEntity<User> responseEntity = null;
-		System.out.println("username - " + user.getUserName() + "  " + "password" + user.getPassword());
 		Supplier<RecordNotFoundException> recordNotFoundException = () -> new RecordNotFoundException(
 				new ApiError(HttpStatus.FORBIDDEN.value(), "User name / password is incorrect"));
 		User loggedInUser = userService.login(user).orElseThrow(recordNotFoundException);
+		LOGGER.info("User found - {}", loggedInUser.getUserName());
 		responseEntity = ResponseEntity.ok().body(loggedInUser);
 		return responseEntity;
 	}

@@ -5,6 +5,13 @@ import java.util.function.Predicate;
 
 public class DtsUtils {
 
-	Predicate<String> emptyOrNullPredicate = s -> s == null || s.length() == 0;
-	Predicate<Collection<Object>> emptyOrNullCollectionPredicate = s -> s == null || s.isEmpty();
+	public static <T> boolean isNullOrEmpty(Collection<T> collection) {
+		Predicate<Collection<T>> emptyOrNullCollectionPredicate = s -> s == null || s.isEmpty();
+		return emptyOrNullCollectionPredicate.test(collection);
+	}
+
+	public static boolean isNullOrEmpty(String str) {
+		Predicate<String> emptyOrNullPredicate = s -> s == null || s.isEmpty();
+		return emptyOrNullPredicate.test(str);
+	}
 }

@@ -5,13 +5,16 @@ package com.mazzee.dts.service;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Predicate;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mazzee.dts.controller.UserController;
 import com.mazzee.dts.dto.User;
 import com.mazzee.dts.repo.UserRepo;
+import com.mazzee.dts.utils.DtsUtils;
 
 /**
  * @author mazhar
@@ -19,6 +22,7 @@ import com.mazzee.dts.repo.UserRepo;
  */
 @Service
 public class UserService {
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 	private UserRepo userRepo;
 
@@ -28,27 +32,31 @@ public class UserService {
 	}
 
 	public Optional<User> login(final User user) {
-		Predicate<String> emptyOrNullPredicate = s -> s == null || s.length() == 0;
 		Optional<User> loggedInUser = Optional.empty();
 		if (Objects.nonNull(user)) {
+
 			String password = user.getPassword();
 			String userName = user.getUserName();
 			String email = user.getEmail();
 			String mobileNo = user.getMobileNo();
-			if (emptyOrNullPredicate.negate().test(password)) {
-				if (emptyOrNullPredicate.negate().test(userName)) {
+			if (!DtsUtils.isNullOrEmpty(password)) {
+				if (!DtsUtils.isNullOrEmpty(userName)) {
+					LOGGER.info("Login with userName - {}", user.getUserName());
 					loggedInUser = userRepo.getUserByUserNameAndPassword(userName, password);
 				}
-				if (emptyOrNullPredicate.negate().test(email)) {
+				if (!DtsUtils.isNullOrEmpty(email)) {
+					LOGGER.info("Login with email - {}", user.getEmail());
 					loggedInUser = userRepo.getUserByEmailAndPassword(email, password);
 				}
-				if (emptyOrNullPredicate.negate().test(mobileNo)) {
+				if (!DtsUtils.isNullOrEmpty(mobileNo)) {
+					LOGGER.info("Login with mobileNo - {}", user.getMobileNo());
 					loggedInUser = userRepo.getUserByMobileNoAndPassword(mobileNo, password);
 				}
+			} else {
+				LOGGER.info("Password missing");
 			}
 		}
 		return loggedInUser;
-
 	}
 
 }
