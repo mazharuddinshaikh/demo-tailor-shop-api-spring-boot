@@ -5,10 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.mazzee.dts.utils.GlobalErrorHandler;
-
-import net.bytebuddy.asm.Advice.This;
-
 @SpringBootApplication
 public class DemoTailorShopApplication {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DemoTailorShopApplication.class);
