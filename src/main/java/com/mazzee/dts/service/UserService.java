@@ -34,7 +34,6 @@ public class UserService {
 	public Optional<User> login(final User user) {
 		Optional<User> loggedInUser = Optional.empty();
 		if (Objects.nonNull(user)) {
-
 			String password = user.getPassword();
 			String userName = user.getUserName();
 			String email = user.getEmail();
@@ -44,11 +43,11 @@ public class UserService {
 					LOGGER.info("Login with userName - {}", user.getUserName());
 					loggedInUser = userRepo.getUserByUserNameAndPassword(userName, password);
 				}
-				if (!DtsUtils.isNullOrEmpty(email)) {
+				if (!DtsUtils.isNullOrEmpty(email) && !loggedInUser.isPresent()) {
 					LOGGER.info("Login with email - {}", user.getEmail());
 					loggedInUser = userRepo.getUserByEmailAndPassword(email, password);
 				}
-				if (!DtsUtils.isNullOrEmpty(mobileNo)) {
+				if (!DtsUtils.isNullOrEmpty(mobileNo) && !loggedInUser.isPresent()) {
 					LOGGER.info("Login with mobileNo - {}", user.getMobileNo());
 					loggedInUser = userRepo.getUserByMobileNoAndPassword(mobileNo, password);
 				}

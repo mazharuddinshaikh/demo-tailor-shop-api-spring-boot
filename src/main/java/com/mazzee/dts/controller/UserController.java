@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mazzee.dts.dto.User;
 import com.mazzee.dts.service.UserService;
 import com.mazzee.dts.utils.ApiError;
-import com.mazzee.dts.utils.RecordNotFoundException;
+import com.mazzee.dts.utils.UserException;
 
 /**
  * @author mazhar
@@ -38,12 +38,16 @@ public class UserController {
 	}
 
 	@PostMapping(value = "/login", consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<User> login(@RequestBody User user) throws RecordNotFoundException {
+	public ResponseEntity<User> login(@RequestBody User user) throws UserException {
 		LOGGER.info("Login initiated");
 		ResponseEntity<User> responseEntity = null;
-		Supplier<RecordNotFoundException> recordNotFoundException = () -> new RecordNotFoundException(
-				new ApiError(HttpStatus.FORBIDDEN.value(), "User name / password is incorrect"));
-		User loggedInUser = userService.login(user).orElseThrow(recordNotFoundException);
+		Supplier<UserException> userExceptionSupplier = () -> {
+			UserException exception = new UserException(
+					new ApiError(HttpStatus.FORBIDDEN.value(), "User name / password is incorrect"));
+			exception.setUser(user);
+			return exception;
+		};
+		User loggedInUser = userService.login(user).orElseThrow(userExceptionSupplier);
 		LOGGER.info("User found - {}", loggedInUser.getUserName());
 		responseEntity = ResponseEntity.ok().body(loggedInUser);
 		return responseEntity;
