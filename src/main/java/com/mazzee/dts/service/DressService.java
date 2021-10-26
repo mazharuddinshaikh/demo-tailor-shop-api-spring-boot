@@ -1,8 +1,6 @@
 package com.mazzee.dts.service;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,23 +22,16 @@ public class DressService {
 	}
 
 	public List<Dress> getDressList(String dressType) {
-		LOGGER.info("Get dress lis for dress type {}", dressType);
+
 		List<Dress> dressList = null;
-		if (Objects.isNull(dressType) || dressType.isEmpty()) {
+		if (DtsUtils.isNullOrEmpty(dressType)) {
+			LOGGER.info("Get dress list");
 			dressList = dressRepo.getAllDress();
 		} else {
+			LOGGER.info("Get dress list for dress type {}", dressType);
 			dressList = dressRepo.getAllDressByDressType(dressType);
 		}
-		if (!DtsUtils.isNullOrEmpty(dressList)) {
-			LOGGER.info("Dress list count {}", dressList.size());
-		} else {
-			LOGGER.info("No Dress list found for dress type {}", dressType);
-		}
 		return dressList;
-	}
-
-	public void testMethod() {
-		Function.identity();
 	}
 
 }

@@ -33,7 +33,7 @@ public class MeasurementService {
 		if (!DtsUtils.isNullOrEmpty(measurementList)) {
 			LOGGER.info("Found measurement for dress id {} count {}", dressId, measurementList.size());
 		} else {
-			LOGGER.info("No measurement Found for dress id {} ", dressId);
+			LOGGER.info("Measurement not found for dress id {} ", dressId);
 		}
 
 		return measurementList;

@@ -32,4 +32,6 @@ public interface UserRepo extends JpaRepository<User, Integer> {
 	Optional<User> getUserByUserNameOrEmailORMobileNoAndPassword(@Param("userName") String userName,
 			@Param("mobileNo") String mobileNo, @Param("email") String email, @Param("password") String password);
 
+	@Query(value = "SELECT * FROM dts_user WHERE (user_name = :userName OR mobile_no = :userName OR email = :userName)", nativeQuery = true)
+	Optional<User> getUserByUserNameOrEmailOrMobileNo(@Param("userName") String userName);
 }

@@ -16,7 +16,7 @@ public class GlobalErrorHandler {
 
 	@ExceptionHandler(value = RecordNotFoundException.class)
 	public ResponseEntity<ApiError> recordNotFoundException(RecordNotFoundException exception) {
-		LOGGER.info("Record not found {}", exception);
+		LOGGER.error(exception.getApiError().getMessage());
 		ApiError error = exception.getApiError();
 		return ResponseEntity.status(error.getHttpStatus()).body(error);
 	}
@@ -36,7 +36,7 @@ public class GlobalErrorHandler {
 				userId = user.getMobileNo();
 			}
 		}
-		LOGGER.info("Login failed for - {} message - {}", userId, exception.getApiError().getMessage());
+		LOGGER.error("Login failed for - {} message - {}", userId, exception.getApiError().getMessage());
 		ApiError error = exception.getApiError();
 		return ResponseEntity.status(error.getHttpStatus()).body(error);
 	}

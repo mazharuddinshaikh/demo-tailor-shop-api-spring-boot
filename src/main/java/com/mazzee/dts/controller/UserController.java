@@ -12,13 +12,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mazzee.dts.dto.User;
 import com.mazzee.dts.service.UserService;
 import com.mazzee.dts.utils.ApiError;
+import com.mazzee.dts.utils.DtsUtils;
+import com.mazzee.dts.utils.JwtTokenUtils;
 import com.mazzee.dts.utils.UserException;
 
 /**
@@ -26,19 +27,26 @@ import com.mazzee.dts.utils.UserException;
  *
  */
 @RestController
-@RequestMapping("user")
+@RequestMapping("api/v1/user")
 public class UserController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 	private UserService userService;
+	private JwtTokenUtils JwtTokenUtils;
 
 	@Autowired
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
 
-	@PostMapping(value = "/login", consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<User> login(@RequestBody User user) throws UserException {
+	@Autowired
+	public void setJwtTokenUtils(JwtTokenUtils jwtTokenUtils) {
+		JwtTokenUtils = jwtTokenUtils;
+	}
+
+	@PostMapping(value = "/login", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE })
+	public ResponseEntity<User> login(User user) throws UserException {
+		String jwtToken = null;
 		LOGGER.info("Login initiated");
 		ResponseEntity<User> responseEntity = null;
 		Supplier<UserException> userExceptionSupplier = () -> {
@@ -48,6 +56,10 @@ public class UserController {
 			return exception;
 		};
 		User loggedInUser = userService.login(user).orElseThrow(userExceptionSupplier);
+		jwtToken = JwtTokenUtils.generateToken(loggedInUser);
+		if (!DtsUtils.isNullOrEmpty(jwtToken)) {
+			loggedInUser.setAuthenticationToken(jwtToken);
+		}
 		LOGGER.info("User found - {}", loggedInUser.getUserName());
 		responseEntity = ResponseEntity.ok().body(loggedInUser);
 		return responseEntity;

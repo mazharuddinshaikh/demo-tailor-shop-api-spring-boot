@@ -58,4 +58,12 @@ public class UserService {
 		return loggedInUser;
 	}
 
+	public Optional<User> getUserByUserName(final String userName) {
+		Optional<User> user = Optional.empty();
+		if (!DtsUtils.isNullOrEmpty(userName)) {
+			user = userRepo.getUserByUserNameOrEmailOrMobileNo(userName);
+		}
+		return user;
+	}
+
 }
