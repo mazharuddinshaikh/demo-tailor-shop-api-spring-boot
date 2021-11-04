@@ -10,6 +10,12 @@ import org.springframework.stereotype.Repository;
 
 import com.mazzee.dts.dto.Dress;
 
+/**
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
+ */
 @Repository
 public interface DressRepo extends JpaRepository<Dress, Integer> {
 

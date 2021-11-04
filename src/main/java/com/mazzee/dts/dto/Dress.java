@@ -18,6 +18,12 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/**
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
+ */
 @Entity
 @Table(name = "dts_dress")
 @JsonIgnoreProperties(value = { "dressType", "measurementList" })

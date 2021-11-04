@@ -13,6 +13,12 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
+/**
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
+ */
 @Entity
 @Table(name = "dts_user")
 //@JsonIgnoreProperties(value = {"password"})

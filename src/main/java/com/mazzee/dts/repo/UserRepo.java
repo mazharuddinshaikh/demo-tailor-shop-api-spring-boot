@@ -14,6 +14,8 @@ import com.mazzee.dts.dto.User;
 
 /**
  * @author mazhar
+ * @version 1.0.0
+ * @since 1.0.0
  *
  */
 @Repository

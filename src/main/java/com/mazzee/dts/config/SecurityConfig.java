@@ -17,6 +17,17 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.mazzee.dts.jwt.JwtAuthenticationEntryPoint;
+import com.mazzee.dts.jwt.JwtRequestFilter;
+
+/**
+ * Security config class define security related methods in this class
+ * 
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
+ */
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -29,8 +40,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable().httpBasic().and().authorizeRequests().antMatchers("/api/v1/user/**")
-				.permitAll().anyRequest().authenticated().and()
+		String[] swaggerUrls = { "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs" };
+		String[] insecureUrls = { "/api/v1/user/**" };
+		http.cors().and().csrf().disable().httpBasic().and().authorizeRequests().antMatchers(insecureUrls).permitAll()
+				.antMatchers(swaggerUrls).permitAll().anyRequest().authenticated().and()
 				.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class).exceptionHandling()
 				.authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);

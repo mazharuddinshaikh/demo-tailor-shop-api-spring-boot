@@ -1,4 +1,4 @@
-package com.mazzee.dts.config;
+package com.mazzee.dts.jwt;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,8 +15,14 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mazzee.dts.utils.ApiError;
+import com.mazzee.dts.dto.ApiError;
 
+/**
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
+ */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 	private final static Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);

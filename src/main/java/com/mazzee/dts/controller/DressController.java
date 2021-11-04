@@ -12,12 +12,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mazzee.dts.dto.ApiError;
 import com.mazzee.dts.dto.Dress;
+import com.mazzee.dts.exception.RecordNotFoundException;
 import com.mazzee.dts.service.DressService;
-import com.mazzee.dts.utils.ApiError;
 import com.mazzee.dts.utils.DtsUtils;
-import com.mazzee.dts.utils.RecordNotFoundException;
 
+/**
+ * Class define all API related to dress
+ * 
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
+ */
 @RestController
 @RequestMapping("api/v1/dress")
 public class DressController {
@@ -29,6 +37,10 @@ public class DressController {
 		this.dressService = dressService;
 	}
 
+	/**
+	 * @return all dresses
+	 * @throws RecordNotFoundException
+	 */
 	@GetMapping("/allDress")
 	public ResponseEntity<List<Dress>> getDressList() throws RecordNotFoundException {
 		LOGGER.info("Get all dresses");

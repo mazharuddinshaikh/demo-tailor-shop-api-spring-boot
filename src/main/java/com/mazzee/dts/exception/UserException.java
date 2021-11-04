@@ -1,7 +1,13 @@
-package com.mazzee.dts.utils;
+package com.mazzee.dts.exception;
 
+import com.mazzee.dts.dto.ApiError;
 import com.mazzee.dts.dto.User;
 
+/**
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 public class UserException extends Exception {
 
 	/**

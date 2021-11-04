@@ -4,7 +4,13 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class DtsUtils {
+/**
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
+ */
+public final class DtsUtils {
 
 	public static <E> boolean isNullOrEmpty(Collection<E> collection) {
 		return getResultFromFunction(collection, s -> Objects.isNull(s) || s.isEmpty());

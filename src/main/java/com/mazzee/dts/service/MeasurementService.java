@@ -12,6 +12,12 @@ import com.mazzee.dts.dto.Measurement;
 import com.mazzee.dts.repo.MeasurementRepo;
 import com.mazzee.dts.utils.DtsUtils;
 
+/**
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
+ */
 @Service
 public class MeasurementService {
 	private final static Logger LOGGER = LoggerFactory.getLogger(MeasurementService.class);

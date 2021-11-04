@@ -11,6 +11,12 @@ import com.mazzee.dts.dto.Dress;
 import com.mazzee.dts.repo.DressRepo;
 import com.mazzee.dts.utils.DtsUtils;
 
+/**
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
+ */
 @Service
 public class DressService {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DressService.class);

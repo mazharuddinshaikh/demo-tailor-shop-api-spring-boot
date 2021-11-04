@@ -15,15 +15,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mazzee.dts.dto.ApiError;
 import com.mazzee.dts.dto.User;
+import com.mazzee.dts.exception.UserException;
+import com.mazzee.dts.jwt.JwtTokenUtils;
 import com.mazzee.dts.service.UserService;
-import com.mazzee.dts.utils.ApiError;
 import com.mazzee.dts.utils.DtsUtils;
-import com.mazzee.dts.utils.JwtTokenUtils;
-import com.mazzee.dts.utils.UserException;
 
 /**
+ * Class define all API related to users
+ * 
  * @author mazhar
+ * @version 1.0.0
+ * @since 1.0.0
  *
  */
 @RestController

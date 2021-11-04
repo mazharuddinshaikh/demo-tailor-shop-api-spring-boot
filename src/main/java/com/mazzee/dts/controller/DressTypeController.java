@@ -14,14 +14,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mazzee.dts.dto.ApiError;
 import com.mazzee.dts.dto.DressType;
+import com.mazzee.dts.exception.RecordNotFoundException;
 import com.mazzee.dts.service.DressTypeService;
-import com.mazzee.dts.utils.ApiError;
 import com.mazzee.dts.utils.DtsUtils;
-import com.mazzee.dts.utils.RecordNotFoundException;
 
 /**
+ * Class define all API related to dress types
+ * 
  * @author mazhar
+ * @version 1.0.0
+ * @since 1.0.0
  *
  */
 @RestController

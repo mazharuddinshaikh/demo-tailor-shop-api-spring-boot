@@ -8,8 +8,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.mazzee.dts.dto.ApiError;
 import com.mazzee.dts.dto.User;
+import com.mazzee.dts.exception.RecordNotFoundException;
+import com.mazzee.dts.exception.UserException;
 
+/**
+ * Used to handle all errors
+ * 
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
+ */
 @ControllerAdvice
 public class GlobalErrorHandler {
 	private final static Logger LOGGER = LoggerFactory.getLogger(GlobalErrorHandler.class);

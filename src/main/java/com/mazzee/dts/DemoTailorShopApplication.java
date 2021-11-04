@@ -5,6 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * Main class use to start the application
+ * 
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
+ */
 @SpringBootApplication
 public class DemoTailorShopApplication {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DemoTailorShopApplication.class);

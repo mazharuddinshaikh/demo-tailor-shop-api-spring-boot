@@ -1,6 +1,8 @@
-package com.mazzee.dts.config;
+package com.mazzee.dts.jwt;
 
 import java.io.IOException;
+import java.util.Objects;
+import java.util.function.BiPredicate;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -19,13 +21,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.mazzee.dts.utils.DtsUtils;
-import com.mazzee.dts.utils.JwtTokenUtils;
 
-import io.jsonwebtoken.SignatureException;
-
+/**
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
+ */
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 	private final static Logger LOGGER = LoggerFactory.getLogger(JwtRequestFilter.class);
+	private static final String BEARER = "Bearer ";
+	private static final String AUTHORIZATION_HEADER = "Authorization";
 
 	private JwtTokenUtils jwtTokenUtils;
 	private UserDetailsService UserDetailsService;
@@ -43,27 +50,27 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		final String authorizationHeader = request.getHeader("Authorization");
-		String userName = null;
+		final String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
+		final BiPredicate<String, String> biPredicate = (s1, s2) -> s1.equalsIgnoreCase(s2);
+		String userNameOfToken = null;
 		String jwtToken = null;
 		boolean isValidToken = false;
+		LOGGER.info("Validating JWT token");
 
-		if (!DtsUtils.isNullOrEmpty(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
+		if (!DtsUtils.isNullOrEmpty(authorizationHeader) && authorizationHeader.startsWith(BEARER)) {
 			jwtToken = authorizationHeader.substring(7);
-			try {
-				userName = jwtTokenUtils.getUserNameFromToken(jwtToken);
-			} catch (SignatureException e) {
-				LOGGER.error("Invalid jwt token {}", jwtToken);
-				userName = null;
-			}
-
+			userNameOfToken = jwtTokenUtils.getUserNameFromToken(jwtToken);
 		}
-		if (!DtsUtils.isNullOrEmpty(userName)) {
-			UserDetails userDeatils = UserDetailsService.loadUserByUsername(userName);
-			isValidToken = jwtTokenUtils.isValidToken(jwtToken, userDeatils);
+		LOGGER.info("Validating JWT token for user {} and token {}", userNameOfToken, jwtToken);
+		if (!DtsUtils.isNullOrEmpty(userNameOfToken)) {
+			UserDetails userDetails = UserDetailsService.loadUserByUsername(userNameOfToken);
+			if (Objects.nonNull(userDetails)) {
+				isValidToken = biPredicate.test(userNameOfToken, userDetails.getUsername());
+			}
+			LOGGER.info("Is valid token {} for user {}", isValidToken, userNameOfToken);
 			if (isValidToken) {
 				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-						userDeatils, null, userDeatils.getAuthorities());
+						userDetails, null, userDetails.getAuthorities());
 				usernamePasswordAuthenticationToken
 						.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);

@@ -1,7 +1,13 @@
-package com.mazzee.dts.utils;
+package com.mazzee.dts.dto;
 
 import java.util.Collection;
 
+/**
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
+ */
 public class ApiError {
 	private int httpStatus;
 	private String message;

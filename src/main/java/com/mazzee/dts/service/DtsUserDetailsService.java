@@ -1,4 +1,4 @@
-package com.mazzee.dts.config;
+package com.mazzee.dts.service;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -11,12 +11,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.mazzee.dts.dto.User;
-import com.mazzee.dts.repo.UserRepo;
-import com.mazzee.dts.service.UserService;
 
 /*
  * Class used by spring security 
  * to authenticate user
+ */
+/**
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
  */
 @Service
 public class DtsUserDetailsService implements UserDetailsService {
@@ -33,8 +37,8 @@ public class DtsUserDetailsService implements UserDetailsService {
 		Optional<User> optionalUser = userService.getUserByUserName(userName);
 		if (optionalUser.isPresent()) {
 			User user = optionalUser.get();
-			return new org.springframework.security.core.userdetails.User(userName, new BCryptPasswordEncoder().encode(user.getPassword()), true, true, true, true,
-					new ArrayList<>());
+			return new org.springframework.security.core.userdetails.User(userName,
+					new BCryptPasswordEncoder().encode(user.getPassword()), true, true, true, true, new ArrayList<>());
 		}
 		return null;
 	}

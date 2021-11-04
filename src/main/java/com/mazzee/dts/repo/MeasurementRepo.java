@@ -9,6 +9,12 @@ import org.springframework.stereotype.Repository;
 
 import com.mazzee.dts.dto.Measurement;
 
+/**
+ * @author Admin
+ * @version 1.0.0
+ * @since 1.0.0
+ *
+ */
 @Repository
 public interface MeasurementRepo extends JpaRepository<Measurement, Integer> {
 
