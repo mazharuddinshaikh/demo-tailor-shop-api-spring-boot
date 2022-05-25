@@ -12,6 +12,11 @@ public class ApiError {
 	private int httpStatus;
 	private String message;
 	private Collection<String> errorList;
+	
+
+	public ApiError() {
+		super();
+	}
 
 	public ApiError(int httpStatus, String message) {
 		super();

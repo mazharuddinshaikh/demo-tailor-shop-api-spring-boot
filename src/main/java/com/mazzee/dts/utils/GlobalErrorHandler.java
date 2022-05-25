@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.mazzee.dts.dto.ApiError;
-import com.mazzee.dts.dto.User;
+import com.mazzee.dts.dto.ApiResponse;
+import com.mazzee.dts.dto.UserDto;
+import com.mazzee.dts.exception.DtsException;
+import com.mazzee.dts.exception.NewRecordNotFoundException;
 import com.mazzee.dts.exception.RecordNotFoundException;
 import com.mazzee.dts.exception.UserException;
 
@@ -32,9 +35,20 @@ public class GlobalErrorHandler {
 		return ResponseEntity.status(error.getHttpStatus()).body(error);
 	}
 
+	@ExceptionHandler(value = NewRecordNotFoundException.class)
+	public ResponseEntity<ApiResponse<ApiError>> newRecordNotFoundException(NewRecordNotFoundException exception) {
+		LOGGER.error(exception.getApiError().getMessage());
+		ApiError error = exception.getApiError();
+		ApiResponse<ApiError> apiResponse = new ApiResponse<>();
+		apiResponse.setHttpStatus(error.getHttpStatus());
+		apiResponse.setMessage(error.getMessage());
+		apiResponse.setResult(error);
+		return ResponseEntity.status(error.getHttpStatus()).body(apiResponse);
+	}
+
 	@ExceptionHandler(value = UserException.class)
 	public ResponseEntity<ApiError> userException(UserException exception) {
-		User user = exception.getUser();
+		UserDto user = exception.getUserDto();
 		String userId = null;
 		if (Objects.nonNull(user)) {
 			if (!DtsUtils.isNullOrEmpty(user.getUserName())) {
@@ -52,4 +66,10 @@ public class GlobalErrorHandler {
 		return ResponseEntity.status(error.getHttpStatus()).body(error);
 	}
 
+	@ExceptionHandler(value = DtsException.class)
+	public ResponseEntity<ApiError> getDtsException(DtsException dtsException) {
+		LOGGER.info(dtsException.getApiError().getMessage());
+		ApiError error = dtsException.getApiError();
+		return ResponseEntity.status(error.getHttpStatus()).body(error);
+	}
 }

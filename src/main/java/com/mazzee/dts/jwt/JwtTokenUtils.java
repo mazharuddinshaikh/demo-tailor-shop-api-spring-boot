@@ -4,15 +4,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import com.mazzee.dts.dto.User;
+import com.mazzee.dts.dto.UserDto;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -41,7 +39,7 @@ public final class JwtTokenUtils {
 	 * @param user
 	 * @return jwt token for given user object
 	 */
-	public String generateToken(User user) {
+	public String generateToken(UserDto user) {
 		LOGGER.info("Generating JWT token for {}", user.getUserName());
 		String jwtToken = null;
 		Map<String, Object> claims = new HashMap<>();

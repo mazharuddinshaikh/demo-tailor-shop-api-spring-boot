@@ -1,4 +1,4 @@
-package com.mazzee.dts.dto;
+package com.mazzee.dts.entity;
 
 import java.time.LocalDateTime;
 

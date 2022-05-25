@@ -1,7 +1,6 @@
-package com.mazzee.dts.dto;
+package com.mazzee.dts.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -12,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -62,14 +61,13 @@ public class Dress {
 	private LocalDateTime updatedAt;
 	@Column(name = "comment")
 	private String comment;
-	@OneToMany(mappedBy = "dress", fetch = FetchType.EAGER)
-	private List<Measurement> measurementList;
+	@OneToOne(mappedBy = "dress", fetch = FetchType.EAGER)
+	private Measurement measurement;
 	@Transient
 	private String dressImage;
 
 	public Dress() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public int getDressId() {
@@ -198,23 +196,33 @@ public class Dress {
 //		this.customerId = customerId;
 //	}
 
-	public List<Measurement> getMeasurementList() {
-		return measurementList;
+	public Measurement getMeasurement() {
+		return measurement;
 	}
 
-	public void setMeasurementList(List<Measurement> measurementList) {
-		this.measurementList = measurementList;
+	public void setMeasurement(Measurement measurement) {
+		this.measurement = measurement;
 	}
 
 	public String getDressImage() {
-		if (Objects.nonNull(measurementList) && !measurementList.isEmpty()) {
-			return measurementList.get(0).getRawDressImage();
-		}
+//		if (Objects.nonNull(measurementList) && !measurementList.isEmpty()) {
+//			return measurementList.get(0).getRawDressImage();
+//		}
 		return dressImage;
 	}
 
 	public void setDressImage(String dressImage) {
 		this.dressImage = dressImage;
+	}
+
+	@Override
+	public String toString() {
+		return "Dress [dressId=" + dressId + ", dressType=" + dressType + ", dressTypeId=" + dressTypeId + ", customer="
+				+ customer + ", orderDate=" + orderDate + ", deliveryDate=" + deliveryDate + ", deliveryStatus="
+				+ deliveryStatus + ", numberOfDress=" + numberOfDress + ", price=" + price + ", discountedPrice="
+				+ discountedPrice + ", paymentStatus=" + paymentStatus + ", createdAt=" + createdAt + ", updatedAt="
+				+ updatedAt + ", comment=" + comment + ", measurement=" + measurement + ", dressImage=" + dressImage
+				+ "]";
 	}
 
 }

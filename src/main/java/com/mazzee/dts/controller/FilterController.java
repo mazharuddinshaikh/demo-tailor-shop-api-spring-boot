@@ -15,23 +15,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mazzee.dts.dto.ApiError;
-import com.mazzee.dts.entity.DressType;
+import com.mazzee.dts.dto.DressFilterDto;
 import com.mazzee.dts.exception.RecordNotFoundException;
 import com.mazzee.dts.service.DressTypeService;
 import com.mazzee.dts.utils.DtsUtils;
 
 /**
- * Class define all API related to dress types
- * 
- * @author mazhar
- * @version 1.0.0
- * @since 1.0.0
+ * @author Admin
  *
  */
 @RestController
-@RequestMapping("api/v1/dressTypes")
-public class DressTypeController {
-	private final static Logger LOGGER = LoggerFactory.getLogger(DressTypeController.class);
+@RequestMapping("api/dressFilter")
+public class FilterController {
+	private final static Logger LOGGER = LoggerFactory.getLogger(FilterController.class);
 	private DressTypeService dressTypeService;
 
 	@Autowired
@@ -39,19 +35,17 @@ public class DressTypeController {
 		this.dressTypeService = dressTypeService;
 	}
 
-	@GetMapping(value = "/allDressTypes")
-	public ResponseEntity<List<DressType>> getDressType() throws RecordNotFoundException {
-		LOGGER.info("Get all dress types");
-		ResponseEntity<List<DressType>> responseEntity = null;
-		final List<DressType> dressTypeList = dressTypeService.getAllDressTypes();
+	@GetMapping(value = "/v1/allDressFilter")
+	public ResponseEntity<List<DressFilterDto>> getAllFilter() throws RecordNotFoundException {
+		ResponseEntity<List<DressFilterDto>> responseEntity = null;
+		final List<DressFilterDto> dressTypeList = dressTypeService.getAllFilterList();
 		if (!DtsUtils.isNullOrEmpty(dressTypeList)) {
-			LOGGER.info("Get all dress types count {}", dressTypeList.size());
+			LOGGER.info("Get all dress filters {}", dressTypeList.size());
 			responseEntity = ResponseEntity.ok().body(dressTypeList);
 		} else {
-			ApiError apiError = new ApiError(HttpStatus.NO_CONTENT.value(), "Dress type not found ");
+			ApiError apiError = new ApiError(HttpStatus.NO_CONTENT.value(), "No filter found");
 			throw new RecordNotFoundException(apiError);
 		}
 		return responseEntity;
 	}
-
 }

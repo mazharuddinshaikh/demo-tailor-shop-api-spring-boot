@@ -1,4 +1,4 @@
-package com.mazzee.dts.dto;
+package com.mazzee.dts.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -35,7 +36,7 @@ public class Measurement {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "measurement_id")
 	private int measurementId;
-	@ManyToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "dress_id")
 	private Dress dress;
 	@Column(name = "measurement_image")

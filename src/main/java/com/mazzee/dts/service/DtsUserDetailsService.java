@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.mazzee.dts.dto.User;
+import com.mazzee.dts.entity.User;
 
 /*
  * Class used by spring security 

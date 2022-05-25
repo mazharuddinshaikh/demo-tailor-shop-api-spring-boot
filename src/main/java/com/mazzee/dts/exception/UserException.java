@@ -1,7 +1,7 @@
 package com.mazzee.dts.exception;
 
 import com.mazzee.dts.dto.ApiError;
-import com.mazzee.dts.dto.User;
+import com.mazzee.dts.dto.UserDto;
 
 /**
  * @author Admin
@@ -16,7 +16,7 @@ public class UserException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	private ApiError apiError;
-	private User user;
+	private UserDto userDto;
 
 	public UserException(ApiError apiError) {
 		super();
@@ -31,12 +31,12 @@ public class UserException extends Exception {
 		this.apiError = apiError;
 	}
 
-	public User getUser() {
-		return user;
+	public UserDto getUserDto() {
+		return userDto;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserDto(UserDto userDto) {
+		this.userDto = userDto;
 	}
 
 }
