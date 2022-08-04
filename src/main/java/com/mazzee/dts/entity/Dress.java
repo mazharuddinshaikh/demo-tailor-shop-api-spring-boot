@@ -1,8 +1,8 @@
 package com.mazzee.dts.entity;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,9 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Admin
@@ -25,22 +22,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @Entity
 @Table(name = "dts_dress")
-@JsonIgnoreProperties(value = { "dressType", "measurementList" })
 public class Dress {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "dress_id")
 	private int dressId;
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "dress_type")
-	private DressType dressType;
-	@Transient
-	private int dressTypeId;
-	@ManyToOne(fetch = FetchType.EAGER)
+	private UserDressType userDressType;
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
-//	@Transient
-//	private int customerId;
 	@Column(name = "order_date")
 	private LocalDateTime orderDate;
 	@Column(name = "delivery_date")
@@ -61,10 +53,8 @@ public class Dress {
 	private LocalDateTime updatedAt;
 	@Column(name = "comment")
 	private String comment;
-	@OneToOne(mappedBy = "dress", fetch = FetchType.EAGER)
+	@OneToOne(mappedBy = "dress", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Measurement measurement;
-	@Transient
-	private String dressImage;
 
 	public Dress() {
 		super();
@@ -78,12 +68,12 @@ public class Dress {
 		this.dressId = dressId;
 	}
 
-	public DressType getDressType() {
-		return dressType;
+	public UserDressType getUserDressType() {
+		return userDressType;
 	}
 
-	public void setDressType(DressType dressType) {
-		this.dressType = dressType;
+	public void setUserDressType(UserDressType userDressType) {
+		this.userDressType = userDressType;
 	}
 
 	public Customer getCustomer() {
@@ -174,28 +164,6 @@ public class Dress {
 		this.comment = comment;
 	}
 
-	public int getDressTypeId() {
-		if (Objects.nonNull(this.dressType)) {
-			return this.dressType.getTypeId();
-		}
-		return dressTypeId;
-	}
-
-	public void setDressTypeId(int dressTypeId) {
-		this.dressTypeId = dressTypeId;
-	}
-
-//	public int getCustomerId() {
-//		if (Objects.nonNull(this.customer)) {
-//			return this.customer.getCustomerId();
-//		}
-//		return customerId;
-//	}
-//
-//	public void setCustomerId(int customerId) {
-//		this.customerId = customerId;
-//	}
-
 	public Measurement getMeasurement() {
 		return measurement;
 	}
@@ -204,25 +172,13 @@ public class Dress {
 		this.measurement = measurement;
 	}
 
-	public String getDressImage() {
-//		if (Objects.nonNull(measurementList) && !measurementList.isEmpty()) {
-//			return measurementList.get(0).getRawDressImage();
-//		}
-		return dressImage;
-	}
-
-	public void setDressImage(String dressImage) {
-		this.dressImage = dressImage;
-	}
-
 	@Override
 	public String toString() {
-		return "Dress [dressId=" + dressId + ", dressType=" + dressType + ", dressTypeId=" + dressTypeId + ", customer="
-				+ customer + ", orderDate=" + orderDate + ", deliveryDate=" + deliveryDate + ", deliveryStatus="
-				+ deliveryStatus + ", numberOfDress=" + numberOfDress + ", price=" + price + ", discountedPrice="
-				+ discountedPrice + ", paymentStatus=" + paymentStatus + ", createdAt=" + createdAt + ", updatedAt="
-				+ updatedAt + ", comment=" + comment + ", measurement=" + measurement + ", dressImage=" + dressImage
-				+ "]";
+		return "Dress [dressId=" + dressId + ", dressType=" + userDressType + ", customer=" + customer + ", orderDate="
+				+ orderDate + ", deliveryDate=" + deliveryDate + ", deliveryStatus=" + deliveryStatus
+				+ ", numberOfDress=" + numberOfDress + ", price=" + price + ", discountedPrice=" + discountedPrice
+				+ ", paymentStatus=" + paymentStatus + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt
+				+ ", comment=" + comment + ", measurement=" + measurement + "]";
 	}
 
 }

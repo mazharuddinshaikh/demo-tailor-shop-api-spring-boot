@@ -20,7 +20,6 @@ public class DressTypeDto {
 
 	public DressTypeDto() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public int getTypeId() {

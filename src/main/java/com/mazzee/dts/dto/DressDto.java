@@ -9,10 +9,7 @@ package com.mazzee.dts.dto;
  */
 public class DressDto {
 	private int dressId;
-//	private int dressTypeId;
-//	private String dressTypeName;
-//	private String dressTypeDescription;
-	private DressTypeDto dressType;
+	private UserDressTypeDto dressType;
 	private CustomerDto customer;
 	private String orderDate;
 	private String orderTime;
@@ -25,14 +22,9 @@ public class DressDto {
 	private String paymentStatus;
 	private String comment;
 	private MeasurementDto measurement;
-//	private String seavedImage;
-//	private String PatternImage;
-//	private String rawImage;
-//	private String measurementImage;
 
 	public DressDto() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public int getDressId() {
@@ -43,39 +35,15 @@ public class DressDto {
 		this.dressId = dressId;
 	}
 
-//	public int getDressTypeId() {
-//		return dressTypeId;
-//	}
-//
-//	public void setDressTypeId(int dressTypeId) {
-//		this.dressTypeId = dressTypeId;
-//	}
-//
-//	public String getDressTypeName() {
-//		return dressTypeName;
-//	}
-//
-//	public void setDressTypeName(String dressTypeName) {
-//		this.dressTypeName = dressTypeName;
-//	}
-//
-//	public String getDressTypeDescription() {
-//		return dressTypeDescription;
-//	}
-//
-//	public void setDressTypeDescription(String dressTypeDescription) {
-//		this.dressTypeDescription = dressTypeDescription;
-//	}
-
 	public CustomerDto getCustomer() {
 		return customer;
 	}
 
-	public DressTypeDto getDressType() {
+	public UserDressTypeDto getDressType() {
 		return dressType;
 	}
 
-	public void setDressType(DressTypeDto dressType) {
+	public void setDressType(UserDressTypeDto dressType) {
 		this.dressType = dressType;
 	}
 
@@ -162,38 +130,6 @@ public class DressDto {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-
-//	public String getSeavedImage() {
-//		return seavedImage;
-//	}
-//
-//	public void setSeavedImage(String seavedImage) {
-//		this.seavedImage = seavedImage;
-//	}
-//
-//	public String getPatternImage() {
-//		return PatternImage;
-//	}
-//
-//	public void setPatternImage(String patternImage) {
-//		PatternImage = patternImage;
-//	}
-//
-//	public String getRawImage() {
-//		return rawImage;
-//	}
-//
-//	public void setRawImage(String rawImage) {
-//		this.rawImage = rawImage;
-//	}
-//
-//	public String getMeasurementImage() {
-//		return measurementImage;
-//	}
-//
-//	public void setMeasurementImage(String measurementImage) {
-//		this.measurementImage = measurementImage;
-//	}
 
 	public MeasurementDto getMeasurement() {
 		return measurement;

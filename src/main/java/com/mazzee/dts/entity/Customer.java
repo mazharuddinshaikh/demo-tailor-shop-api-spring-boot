@@ -1,8 +1,9 @@
 package com.mazzee.dts.entity;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,11 +12,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Admin
@@ -25,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @Entity
 @Table(name = "dts_customer")
-@JsonIgnoreProperties({ "user", "invoice" })
 public class Customer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +41,7 @@ public class Customer {
 	private String email;
 	@Column(name = "gender")
 	private String gender;
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
 	private User user;
 	@Column(name = "order_date")
@@ -54,10 +52,10 @@ public class Customer {
 	private LocalDateTime createdAt;
 	@Column(name = "updated_at")
 	private LocalDateTime updateAt;
-	@Transient
-	private int invoiceId;
-	@OneToOne(mappedBy = "customer", fetch = FetchType.EAGER)
+	@OneToOne(mappedBy = "customer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Invoice invoice;
+	@OneToMany(mappedBy = "customer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private List<Dress> dressList;
 
 	public Customer() {
 		super();
@@ -167,15 +165,12 @@ public class Customer {
 		this.invoice = invoice;
 	}
 
-	public int getInvoiceId() {
-		if (Objects.nonNull(invoice)) {
-			return invoice.getInvoiceId();
-		}
-		return invoiceId;
+	public List<Dress> getDressList() {
+		return dressList;
 	}
 
-	public void setInvoiceId(int invoiceId) {
-		this.invoiceId = invoiceId;
+	public void setDressList(List<Dress> dressList) {
+		this.dressList = dressList;
 	}
 
 }

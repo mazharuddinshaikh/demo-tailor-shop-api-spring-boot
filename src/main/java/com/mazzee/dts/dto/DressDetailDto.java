@@ -13,7 +13,6 @@ public class DressDetailDto {
 	private CustomerDto customer;
 	private List<DressDto> dressList;
 	private InvoiceDto customerInvoice;
-//	private List<MultipartFile> multipartFiles;
 
 	public DressDetailDto() {
 	}
@@ -41,13 +40,5 @@ public class DressDetailDto {
 	public void setCustomerInvoice(InvoiceDto customerInvoice) {
 		this.customerInvoice = customerInvoice;
 	}
-
-//	public List<MultipartFile> getMultipartFiles() {
-//		return multipartFiles;
-//	}
-//
-//	public void setMultipartFiles(List<MultipartFile> multipartFiles) {
-//		this.multipartFiles = multipartFiles;
-//	}
 
 }

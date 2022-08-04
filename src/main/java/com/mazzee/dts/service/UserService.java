@@ -115,6 +115,13 @@ public class UserService {
 		return user;
 	}
 
+	public Optional<User> getUserByUserId(final int userId) {
+		LOGGER.info("Get user bu user id");
+		Optional<User> user = Optional.empty();
+		user = userRepo.getUserByUserId(userId);
+		return user;
+	}
+
 	public Optional<User> getUserByEmail(final String email) {
 		Optional<User> user = Optional.empty();
 		if (!DtsUtils.isNullOrEmpty(email)) {
@@ -126,6 +133,7 @@ public class UserService {
 	public UserDto addUser(UserDto userDto) throws DtsException {
 		if (Objects.nonNull(userDto)) {
 			User user = getUserFromDto(userDto);
+			LOGGER.info("Adding new user");
 			user = userRepo.save(user);
 			if (Objects.nonNull(user)) {
 				userDto = getDtoFromUser(user);
@@ -198,6 +206,7 @@ public class UserService {
 	}
 
 	public String updatePassword(String userName, String oldPassword, String newPassword) throws DtsException {
+		LOGGER.info("Update password");
 		String message = null;
 		User user = null;
 		Optional<User> userOptional = userRepo.getUserByUserName(userName);
@@ -258,7 +267,9 @@ public class UserService {
 				user.setEmail(userDto.getEmail());
 			}
 			user = userRepo.save(user);
-			updatedUser = userDtoMapper.getDtoFromUser(user);
+			if (Objects.nonNull(user)) {
+				updatedUser = userDtoMapper.getDtoFromUser(user);
+			}
 		}
 		return updatedUser;
 	}

@@ -4,7 +4,6 @@ import java.util.List;
 
 public class MeasurementDto {
 	private int measurementId;
-//	private Dress dress;
 	private List<String> measurementImageList;
 	private List<String> rawDressImageList;
 	private List<String> patternImageList;
@@ -15,7 +14,6 @@ public class MeasurementDto {
 
 	public MeasurementDto() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public int getMeasurementId() {

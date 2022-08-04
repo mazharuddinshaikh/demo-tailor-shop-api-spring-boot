@@ -2,6 +2,7 @@ package com.mazzee.dts.entity;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,8 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 /**
  * @author Admin
  * @version 1.0.0
@@ -21,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @Entity
 @Table(name = "dts_invoice")
-@JsonIgnoreProperties({ "customer" })
 public class Invoice {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +37,7 @@ public class Invoice {
 	private double totalAmount;
 	@Column(name = "paid_amount")
 	private double paidAmount;
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 

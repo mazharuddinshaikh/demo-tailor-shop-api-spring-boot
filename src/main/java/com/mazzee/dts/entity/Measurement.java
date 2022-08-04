@@ -1,13 +1,8 @@
 package com.mazzee.dts.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,12 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Admin
@@ -30,13 +21,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @Entity
 @Table(name = "dts_measurement")
-@JsonIgnoreProperties({ "dress", "measurementImage", "rawDressImage", "patternImage", "seavedImage" })
 public class Measurement {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "measurement_id")
 	private int measurementId;
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "dress_id")
 	private Dress dress;
 	@Column(name = "measurement_image")
@@ -53,20 +43,9 @@ public class Measurement {
 	private LocalDateTime createdAt;
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
-	@Transient
-	List<String> rawDressImageList;
-	@Transient
-	List<String> patternImageList;
-	@Transient
-	List<String> measurementImageList;
-	@Transient
-	List<String> seavedImageList;
-	@Transient
-	private static Pattern pattern;
 
 	public Measurement() {
 		super();
-		pattern = Pattern.compile("\\|\\|");
 	}
 
 	public int getMeasurementId() {
@@ -139,38 +118,6 @@ public class Measurement {
 
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
-	}
-
-	public List<String> getRawDressImageList() {
-		if (Objects.nonNull(this.rawDressImage)) {
-			Stream<String> result = pattern.splitAsStream(this.rawDressImage);
-			return result.collect(Collectors.toList());
-		}
-		return new ArrayList<String>();
-	}
-
-	public List<String> getPatternImageList() {
-		if (Objects.nonNull(this.patternImage)) {
-			Stream<String> result = pattern.splitAsStream(this.patternImage);
-			return result.collect(Collectors.toList());
-		}
-		return new ArrayList<String>();
-	}
-
-	public List<String> getMeasurementImageList() {
-		if (Objects.nonNull(this.measurementImage)) {
-			Stream<String> result = pattern.splitAsStream(this.measurementImage);
-			return result.collect(Collectors.toList());
-		}
-		return new ArrayList<String>();
-	}
-
-	public List<String> getSeavedImageList() {
-		if (Objects.nonNull(this.seavedImage)) {
-			Stream<String> result = pattern.splitAsStream(this.seavedImage);
-			return result.collect(Collectors.toList());
-		}
-		return new ArrayList<String>();
 	}
 
 }

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.mazzee.dts.dto.UserDto;
+import com.mazzee.dts.utils.DtsUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -44,7 +45,9 @@ public final class JwtTokenUtils {
 		String jwtToken = null;
 		Map<String, Object> claims = new HashMap<>();
 		jwtToken = doGenerateToken(claims, user.getUserName());
-		LOGGER.info("JWT token generated for user {} token {}", user.getUserName(), jwtToken);
+		if (!DtsUtils.isNullOrEmpty(jwtToken)) {
+			jwtToken = "Bearer " + jwtToken;
+		}
 		return jwtToken;
 	}
 

@@ -123,7 +123,8 @@ public class AwsS3Util {
 
 	public String getAwsS3ImageBaseUrl() {
 		String url = null;
-		url = "https://" + amazonS3BucketName + ".s3." + amazonS3Region + "." + amazonS3Url + "/" + amazonS3RootFolder;
+//		commented for developement purpose
+//		url = "https://" + amazonS3BucketName + ".s3." + amazonS3Region + "." + amazonS3Url + "/" + amazonS3RootFolder;
 		return url;
 	}
 }

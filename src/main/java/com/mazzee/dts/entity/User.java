@@ -9,9 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
-
 /**
  * @author Admin
  * @version 1.0.0
@@ -20,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
  */
 @Entity
 @Table(name = "dts_user")
-//@JsonIgnoreProperties(value = {"password"})
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +36,6 @@ public class User {
 	private String email;
 	@Column(name = "user_name")
 	private String userName;
-	@JsonProperty(access = Access.WRITE_ONLY)
 	@Column(name = "password")
 	private String password;
 	@Column(name = "shop_name")
@@ -51,8 +46,6 @@ public class User {
 	private LocalDateTime createdAt;
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
-//	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//	private List<DressType> dressTypeList;
 
 	public User() {
 		super();

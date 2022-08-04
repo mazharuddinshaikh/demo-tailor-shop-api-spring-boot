@@ -45,17 +45,10 @@ public class MeasurementService {
 		if (Objects.nonNull(dressId) && dressId != 0) {
 			measurement = measurementRepo.getMeasurementByDressId(dressId);
 		}
-		if (measurement.isPresent()) {
-			LOGGER.info("Found measurement for dress id {} measurement id {}", dressId,
-					measurement.get().getMeasurementId());
-		} else {
-			LOGGER.info("Measurement not found for dress id {} ", dressId);
-		}
 		return measurement;
 	}
 
 	public List<Measurement> getMeasureMentByDressId(List<Integer> dressIdList) {
-//		LOGGER.info("Get measurement for dress id {}", dressId);
 		List<Measurement> measurementList = null;
 		if (!DtsUtils.isNullOrEmpty(dressIdList)) {
 			measurementList = measurementRepo.getMeasurementByDressId(dressIdList);

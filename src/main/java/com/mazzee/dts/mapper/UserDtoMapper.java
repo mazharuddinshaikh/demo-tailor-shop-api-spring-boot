@@ -50,12 +50,10 @@ public class UserDtoMapper {
 			mapper.map(User::getAlternateMobileNo, UserDto::setAlternateMobileNo);
 			mapper.map(User::getEmail, UserDto::setEmail);
 			mapper.map(User::getUserName, UserDto::setUserName);
-//			mapper.map(User::getPassword, (userDto, value) -> userDto.setPassword(null));
 			mapper.map(User::getShopName, UserDto::setShopName);
 			mapper.map(User::getAddress, UserDto::setAddress);
 			mapper.map(User::getCreatedAt, UserDto::setCreatedAt);
 			mapper.map(User::getUpdatedAt, UserDto::setUpdatedAt);
-//			mapper.map(User::getAuthenticationToken, UserDto::setAuthenticationToken);
 			mapper.skip(User::getPassword, UserDto::setPassword);
 		});
 		return modelMapper;

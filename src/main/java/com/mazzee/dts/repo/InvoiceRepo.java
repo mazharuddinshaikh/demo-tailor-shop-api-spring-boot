@@ -17,6 +17,6 @@ import com.mazzee.dts.entity.Invoice;
  */
 @Repository
 public interface InvoiceRepo extends JpaRepository<Invoice, Integer> {
-	@Query(value = "SELECT * FROM DTS_INVOICE WHERE CUSTOMER_ID = 1000", nativeQuery = true)
+	@Query(value = "SELECT * FROM DTS_INVOICE WHERE CUSTOMER_ID = :customerId", nativeQuery = true)
 	Optional<Invoice> getInvoiceByCustomerId(@Param("customerId") int customerId);
 }

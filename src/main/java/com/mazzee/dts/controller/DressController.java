@@ -7,7 +7,6 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.mazzee.dts.dto.ApiError;
 import com.mazzee.dts.dto.ApiResponse;
@@ -56,15 +54,10 @@ public class DressController {
 			@RequestParam(name = "dressType", required = false) List<String> dressTypes,
 			@PathVariable(name = "userId") Integer userId, @PathVariable(name = "offset") Integer offset,
 			@PathVariable(name = "limit") Integer limit) throws RecordNotFoundException, IOException {
-		String externalImagePath = new ClassPathResource("/").getFile().getAbsolutePath();
-		LOGGER.info("External image path {}", externalImagePath);
-		LOGGER.info("External image path {}",
-				ServletUriComponentsBuilder.fromCurrentContextPath().path("/").path("dts-images").toUriString());
-		LOGGER.info("Get all dresses");
+		LOGGER.info("Get dress list");
 		ResponseEntity<ApiResponse<List<DressDto>>> responseEntity = null;
 		List<DressDto> dressList = dressService.getDressListByUser(dressTypes, userId, offset, limit);
 		if (!DtsUtils.isNullOrEmpty(dressList)) {
-			LOGGER.info("Dress list found count {}", dressList.size());
 			ApiResponse<List<DressDto>> apiResponse = new ApiResponse<>();
 			apiResponse.setHttpStatus(HttpStatus.OK.value());
 			apiResponse.setMessage("Dress list found");
@@ -80,6 +73,7 @@ public class DressController {
 	@GetMapping("/v1/allDress/dressDetail/{userId}/{customerId}")
 	public ResponseEntity<ApiResponse<DressDetailDto>> getDressDetail(@PathVariable("userId") int userId,
 			@PathVariable("customerId") int customerId) throws NewRecordNotFoundException {
+		LOGGER.info("Get dress detail");
 		ResponseEntity<ApiResponse<DressDetailDto>> responseEntity = null;
 		ApiResponse<DressDetailDto> dressResponse = new ApiResponse<>();
 		DressDetailDto dressDetails = dressService.getDressDetail(userId, customerId);
@@ -97,18 +91,24 @@ public class DressController {
 
 	@PostMapping(value = "/v1/allDress/updateDress/{userId}", consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.MULTIPART_FORM_DATA_VALUE })
-	public ResponseEntity<ApiResponse<String>> updateDressDetail(@PathVariable("userId") int userId,
+	public ResponseEntity<ApiResponse<DressDetailDto>> updateDressDetail(@PathVariable("userId") int userId,
 			@RequestBody DressDetailDto dressDetail) throws DtsException {
+		LOGGER.info("Updating dress details");
 		String message = "Dress detail updated successfully";
-		ResponseEntity<ApiResponse<String>> responseEntity = null;
-		boolean isDressDetailUpdated = false;
+		ResponseEntity<ApiResponse<DressDetailDto>> responseEntity = null;
+
 		ApiError apiError = null;
-		isDressDetailUpdated = dressService.updateDress(userId, dressDetail);
-		if (isDressDetailUpdated) {
-			ApiResponse<String> userResponse = new ApiResponse<>();
-			userResponse.setHttpStatus(HttpStatus.OK.value());
-			userResponse.setMessage(message);
-			responseEntity = ResponseEntity.ok().body(userResponse);
+		DressDetailDto updatedDressDetails = null;
+		int updatedCustomerId = dressService.updateDress(userId, dressDetail);
+		if (updatedCustomerId > 0) {
+			updatedDressDetails = dressService.getDressDetail(userId, updatedCustomerId);
+		}
+		if (Objects.nonNull(updatedDressDetails)) {
+			ApiResponse<DressDetailDto> dressResponse = new ApiResponse<>();
+			dressResponse.setHttpStatus(HttpStatus.OK.value());
+			dressResponse.setMessage(message);
+			dressResponse.setResult(updatedDressDetails);
+			responseEntity = ResponseEntity.ok().body(dressResponse);
 		} else {
 			apiError = new ApiError(HttpStatus.BAD_REQUEST.value(), "Something went wrong! Dress detail not updated");
 			throw new DtsException(apiError);
@@ -116,17 +116,28 @@ public class DressController {
 		return responseEntity;
 	}
 
-	@PostMapping(value = "/v1/allDress/updateDress/updateImages/{userId}", consumes = {
-			MediaType.MULTIPART_FORM_DATA_VALUE
-
-	})
-	public void updateDressImages(@PathVariable("userId") Integer userId,
-			@RequestParam("dressId") List<Integer> dressIdList, @RequestParam("files") List<MultipartFile> files) {
+	@PostMapping(value = "/v1/allDress/updateDress/updateImages/{userId}/{customerId}")
+	public ResponseEntity<ApiResponse<DressDetailDto>> updateDressImages(@PathVariable("userId") Integer userId,
+			@PathVariable("customerId") Integer customerId, @RequestParam("files") List<MultipartFile> files)
+			throws DtsException {
 		LOGGER.info("Update dress images");
-		if (!DtsUtils.isNullOrEmpty(files) && !DtsUtils.isNullOrEmpty(dressIdList)) {
-			dressService.updateDressImage(userId, dressIdList, files);
-
+		DressDetailDto dressDetailDto = null;
+		ApiError apiError = null;
+		boolean isDressImagesUpdated = dressService.updateDressImage(userId, customerId, files);
+		if (isDressImagesUpdated) {
+			dressDetailDto = dressService.getDressDetail(userId, customerId);
 		}
-
+		ResponseEntity<ApiResponse<DressDetailDto>> responseEntity = null;
+		if (Objects.nonNull(dressDetailDto)) {
+			ApiResponse<DressDetailDto> dressResponse = new ApiResponse<>();
+			dressResponse.setHttpStatus(HttpStatus.OK.value());
+			dressResponse.setMessage("added dress image");
+			dressResponse.setResult(dressDetailDto);
+			responseEntity = ResponseEntity.ok().body(dressResponse);
+		} else {
+			apiError = new ApiError(HttpStatus.BAD_REQUEST.value(), "Something went wrong! Dress images not updated");
+			throw new DtsException(apiError);
+		}
+		return responseEntity;
 	}
 }

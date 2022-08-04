@@ -59,7 +59,7 @@ public class UserController {
 	public ResponseEntity<UserDto> signin(@RequestParam("userName") String userName,
 			@RequestParam("password") String password) throws UserException {
 		String jwtToken = null;
-		LOGGER.info("Login initiated");
+		LOGGER.info("Signin");
 		ResponseEntity<UserDto> responseEntity = null;
 		Supplier<UserException> userExceptionSupplier = () -> {
 			UserException exception = new UserException(
@@ -113,7 +113,7 @@ public class UserController {
 	public ResponseEntity<ApiResponse<String>> updatePassword(@RequestParam("userName") String userName,
 			@RequestParam("oldPassword") String oldPassword, @RequestParam("newPassword") String newPassword)
 			throws DtsException {
-		LOGGER.info("Change password");
+		LOGGER.info("Update password");
 		String message = null;
 		ResponseEntity<ApiResponse<String>> responseEntity = null;
 		String validationMessage = null;
@@ -142,6 +142,7 @@ public class UserController {
 		ApiError apiError = null;
 		boolean isExistingEmail = false;
 		boolean isExistingMobile = false;
+		String jwtToken = null;
 		Optional<User> userOptional = userService.getUserByUserName(userDto.getUserName());
 		if (!userOptional.isPresent()) {
 			apiError = new ApiError(HttpStatus.BAD_REQUEST.value(), "Invalid user");
@@ -171,11 +172,10 @@ public class UserController {
 			apiError = new ApiError(HttpStatus.BAD_REQUEST.value(), "Something went wrong! User not updated");
 			throw new DtsException(apiError);
 		}
-		String jwtToken = userDto.getAuthenticationToken();
-		if (DtsUtils.isNullOrEmpty(jwtToken)) {
-			jwtToken = JwtTokenUtils.generateToken(userDto);
+		jwtToken = JwtTokenUtils.generateToken(updatedUser);
+		if (!DtsUtils.isNullOrEmpty(jwtToken)) {
+			updatedUser.setAuthenticationToken(jwtToken);
 		}
-		updatedUser.setAuthenticationToken(jwtToken);
 		message = "User updated successfully";
 		LOGGER.info("User {} updated successfully", userDto.getUserName());
 		ApiResponse<UserDto> userResponse = new ApiResponse<>();
@@ -191,6 +191,7 @@ public class UserController {
 	public ResponseEntity<ApiResponse<UserDto>> updateShop(@RequestBody UserDto userDto) throws DtsException {
 		LOGGER.info("Update shop");
 		String message = null;
+		String jwtToken = null;
 		ResponseEntity<ApiResponse<UserDto>> responseEntity = null;
 		ApiError apiError = null;
 		Optional<User> userOptional = userService.getUserByUserName(userDto.getUserName());
@@ -200,7 +201,10 @@ public class UserController {
 		}
 		UserDto updatedUser = userService.updateShop(userDto);
 		if (Objects.nonNull(userDto)) {
-			updatedUser.setAuthenticationToken(userDto.getAuthenticationToken());
+			jwtToken = JwtTokenUtils.generateToken(updatedUser);
+			if (!DtsUtils.isNullOrEmpty(jwtToken)) {
+				updatedUser.setAuthenticationToken(jwtToken);
+			}
 			message = "Shop details updated successfully";
 			LOGGER.info("User {} shop updated successfully", userDto.getUserName());
 			ApiResponse<UserDto> userResponse = new ApiResponse<>();

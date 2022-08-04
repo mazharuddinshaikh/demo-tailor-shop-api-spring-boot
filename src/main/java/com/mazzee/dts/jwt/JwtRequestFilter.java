@@ -62,18 +62,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		}
 
 		if (!DtsUtils.isNullOrEmpty(userNameOfToken)) {
-			LOGGER.info("Validating JWT token for user {} and token {}", userNameOfToken, jwtToken);
 			UserDetails userDetails = UserDetailsService.loadUserByUsername(userNameOfToken);
 			if (Objects.nonNull(userDetails)) {
 				isValidToken = biPredicate.test(userNameOfToken, userDetails.getUsername());
 			}
-			LOGGER.info("Is valid token {} for user {}", isValidToken, userNameOfToken);
+			
 			if (isValidToken) {
 				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
 						userDetails, null, userDetails.getAuthorities());
 				usernamePasswordAuthenticationToken
 						.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+			} else {
+				LOGGER.info("Is valid token {} for user {}", isValidToken, userNameOfToken);
 			}
 		}
 		filterChain.doFilter(request, response);

@@ -13,67 +13,44 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-/**
- * @author Admin
- * @version 1.0.0
- * @since 1.0.0
- *
- */
 @Entity
-@Table(name = "dts_dress_type")
-public class DressType {
+@Table(name = "DTS_USER_DRESS_TYPE")
+public class UserDressType {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "type_id")
-	private int typeId;
-	@Column(name = "type_name")
-	private String typeName;
-	@Column(name = "type_description")
-	private String typeDescription;
-	@Column(name = "comment")
-	private String comment;
+	@Column(name = "ID")
+	private int id;
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "created_by")
+	@JoinColumn(name = "DRESS_TYPE_ID")
+	private DressType dressType;
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "USER_ID")
 	private User user;
-	@Column(name = "created_at")
+	@Column(name = "PRICE")
+	private double price;
+	@Column(name = "CREATED_AT")
 	private LocalDateTime createdAt;
-	@Column(name = "updated_at")
+	@Column(name = "UPDATED_AT")
 	private LocalDateTime updatedAt;
 
-	public DressType() {
+	public UserDressType() {
 		super();
 	}
 
-	public int getTypeId() {
-		return typeId;
+	public int getId() {
+		return id;
 	}
 
-	public void setTypeId(int typeId) {
-		this.typeId = typeId;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public String getTypeName() {
-		return typeName;
+	public DressType getDressType() {
+		return dressType;
 	}
 
-	public void setTypeName(String typeName) {
-		this.typeName = typeName;
-	}
-
-	public String getTypeDescription() {
-		return typeDescription;
-	}
-
-	public void setTypeDescription(String typeDescription) {
-		this.typeDescription = typeDescription;
-	}
-
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
+	public void setDressType(DressType dressType) {
+		this.dressType = dressType;
 	}
 
 	public User getUser() {
@@ -82,6 +59,14 @@ public class DressType {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
 	}
 
 	public LocalDateTime getCreatedAt() {

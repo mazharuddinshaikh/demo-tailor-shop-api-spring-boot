@@ -19,7 +19,6 @@ public class InvoiceDto {
 
 	public InvoiceDto() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public int getInvoiceId() {

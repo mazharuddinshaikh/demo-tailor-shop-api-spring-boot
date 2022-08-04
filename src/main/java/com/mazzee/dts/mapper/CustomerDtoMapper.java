@@ -8,6 +8,8 @@ import java.util.Objects;
 
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,7 @@ public class CustomerDtoMapper {
 		ModelMapper modelMapper = new ModelMapper();
 		Converter<LocalDateTime, String> dateConverter = dtsModelMapper.getDateConverter();
 		Converter<LocalDateTime, String> timeConverter = dtsModelMapper.getTimeConverter();
+
 		modelMapper.typeMap(Customer.class, CustomerDto.class).addMappings(mapper -> {
 			mapper.map(Customer::getCustomerId, CustomerDto::setCustomerId);
 			mapper.map(Customer::getFirstName, CustomerDto::setFirstName);

@@ -42,13 +42,11 @@ public class DressTypeService {
 	public List<DressType> getAllDressTypes() {
 		LOGGER.info("Get all dress types ");
 		List<DressType> dressTypeList = dressTypeRepo.getAllDressTypes();
-		if (!DtsUtils.isNullOrEmpty(dressTypeList)) {
-			LOGGER.info("Get all dress types count {}", dressTypeList.size());
-		}
 		return dressTypeList;
 	}
 
 	public List<DressFilterDto> getAllFilterList() {
+		LOGGER.info("Get all filter");
 		List<DressFilterDto> filterlist = new ArrayList<>();
 		DressFilterDto dressTypeFilter = new DressFilterDto();
 		dressTypeFilter.setFilterType(DtsConstant.FILTER_BY_DRESS_TYPE);
