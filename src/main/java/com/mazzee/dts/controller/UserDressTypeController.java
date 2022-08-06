@@ -42,6 +42,14 @@ public class UserDressTypeController {
 		LOGGER.info("Get all User Dress types");
 		ResponseEntity<ApiResponse<List<UserDressTypeDto>>> responseEntity = null;
 		List<UserDressTypeDto> userDressTypeList = userDressTypeService.getUserDressTypeListByUserId(userId);
+//		new user dress types not available
+		if (DtsUtils.isNullOrEmpty(userDressTypeList)) {
+			LOGGER.info("New user. Adding default dress types");
+			List<UserDressType> userDressTypes = userDressTypeService.addAllDefaultUserDressType(userId);
+			if (!DtsUtils.isNullOrEmpty(userDressTypes)) {
+				userDressTypeList = userDressTypeService.getUserDressTypeListByUserId(userId);
+			}
+		}
 		if (!DtsUtils.isNullOrEmpty(userDressTypeList)) {
 			ApiResponse<List<UserDressTypeDto>> apiResponse = new ApiResponse<>();
 			apiResponse.setHttpStatus(HttpStatus.OK.value());

@@ -1,6 +1,7 @@
 package com.mazzee.dts.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mazzee.dts.dto.UserDressTypeDto;
+import com.mazzee.dts.entity.DressType;
+import com.mazzee.dts.entity.User;
 import com.mazzee.dts.entity.UserDressType;
 import com.mazzee.dts.mapper.UserDressTypeDtoMapper;
 import com.mazzee.dts.repo.UserDressTypeRepo;
@@ -22,6 +25,8 @@ public class UserDressTypeService {
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserDressTypeService.class);
 	private UserDressTypeRepo userDressTypeRepo;
 	private UserDressTypeDtoMapper userDressTypeDtoMapper;
+	private DressTypeService dressTypeService;
+	private UserService userService;
 
 	@Autowired
 	public void setUserDressTypeRepo(UserDressTypeRepo userDressTypeRepo) {
@@ -33,6 +38,16 @@ public class UserDressTypeService {
 		this.userDressTypeDtoMapper = userDressTypeDtoMapper;
 	}
 
+	@Autowired
+	public void setDressTypeService(DressTypeService dressTypeService) {
+		this.dressTypeService = dressTypeService;
+	}
+
+	@Autowired
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
 	public List<UserDressTypeDto> getUserDressTypeListByUserId(int userId) {
 		LOGGER.info("Get user dress type by user id {}", userId);
 		List<UserDressType> userDressTypeList = userDressTypeRepo.getDressTypeListByUserId(userId);
@@ -41,6 +56,35 @@ public class UserDressTypeService {
 			userDressTypeDtoList = getUserDressTypeDtoList(userDressTypeList);
 		}
 		return userDressTypeDtoList;
+	}
+
+	public List<UserDressType> addAllDefaultUserDressType(int userId) {
+		LOGGER.info("Adding user dress types for user id {}", userId);
+		Optional<User> userOptional = userService.getUserByUserId(userId);
+		List<DressType> dressTypeList = dressTypeService.getAllDressTypes();
+		List<UserDressType> userDressTypeList = null;
+		if (!DtsUtils.isNullOrEmpty(dressTypeList) && userOptional.isPresent()) {
+			userDressTypeList = getDefaultUserDressTypeList(dressTypeList, userOptional.get());
+		}
+		if (!DtsUtils.isNullOrEmpty(userDressTypeList)) {
+			userDressTypeList = userDressTypeRepo.saveAll(userDressTypeList);
+		}
+		return userDressTypeList;
+	}
+
+	private List<UserDressType> getDefaultUserDressTypeList(List<DressType> dressTypeList, User user) {
+		List<UserDressType> userDressTypeList = new ArrayList<>();
+		for (DressType dressType : dressTypeList) {
+			UserDressType userDressType = new UserDressType();
+			userDressType.setDressType(dressType);
+			userDressType.setUser(user);
+			userDressType.setCreatedAt(LocalDateTime.now());
+			userDressType.setUpdatedAt(LocalDateTime.now());
+			userDressType.setPrice(0.0);
+			userDressTypeList.add(userDressType);
+		}
+		return userDressTypeList;
+
 	}
 
 	public List<UserDressTypeDto> getUserDressTypeDtoList(List<UserDressType> userDressTypeList) {
