@@ -39,7 +39,7 @@ import com.mazzee.dts.utils.DtsUtils;
  *
  */
 @RestController
-@RequestMapping("api/dress")
+@RequestMapping("api/dress/")
 public class DressController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DressController.class);
 	private DressService dressService;
@@ -49,7 +49,7 @@ public class DressController {
 		this.dressService = dressService;
 	}
 
-	@GetMapping("/v1/allDress/{userId}/{offset}/{limit}")
+	@GetMapping("v1/allDress/{userId}/{offset}/{limit}")
 	public ResponseEntity<ApiResponse<List<DressDto>>> getDressListByUser(
 			@RequestParam(name = "dressType", required = false) List<String> dressTypes,
 			@PathVariable(name = "userId") Integer userId, @PathVariable(name = "offset") Integer offset,
@@ -70,7 +70,7 @@ public class DressController {
 		return responseEntity;
 	}
 
-	@GetMapping("/v1/allDress/dressDetail/{userId}/{customerId}")
+	@GetMapping("v1/dressDetail/{userId}/{customerId}")
 	public ResponseEntity<ApiResponse<DressDetailDto>> getDressDetail(@PathVariable("userId") int userId,
 			@PathVariable("customerId") int customerId) throws NewRecordNotFoundException {
 		LOGGER.info("Get dress detail");
@@ -89,7 +89,7 @@ public class DressController {
 		return responseEntity;
 	}
 
-	@PostMapping(value = "/v1/allDress/updateDress/{userId}", consumes = { MediaType.APPLICATION_JSON_VALUE,
+	@PostMapping(value = "v1/updateDress/{userId}", consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.MULTIPART_FORM_DATA_VALUE })
 	public ResponseEntity<ApiResponse<DressDetailDto>> updateDressDetail(@PathVariable("userId") int userId,
 			@RequestBody DressDetailDto dressDetail) throws DtsException {
@@ -116,7 +116,7 @@ public class DressController {
 		return responseEntity;
 	}
 
-	@PostMapping(value = "/v1/allDress/updateDress/updateImages/{userId}/{customerId}")
+	@PostMapping(value = "v1/updateDress/updateImages/{userId}/{customerId}")
 	public ResponseEntity<ApiResponse<DressDetailDto>> updateDressImages(@PathVariable("userId") Integer userId,
 			@PathVariable("customerId") Integer customerId, @RequestParam("files") List<MultipartFile> files)
 			throws DtsException {

@@ -29,7 +29,7 @@ import com.mazzee.dts.utils.DtsUtils;
  *
  */
 @RestController
-@RequestMapping("api/v1/dressTypes")
+@RequestMapping("api/dressType/")
 public class DressTypeController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DressTypeController.class);
 	private DressTypeService dressTypeService;
@@ -39,7 +39,7 @@ public class DressTypeController {
 		this.dressTypeService = dressTypeService;
 	}
 
-	@GetMapping(value = "/allDressTypes")
+	@GetMapping(value = "v1/allDressTypes")
 	public ResponseEntity<List<DressType>> getDressType() throws RecordNotFoundException {
 		LOGGER.info("Get all dress types");
 		ResponseEntity<List<DressType>> responseEntity = null;

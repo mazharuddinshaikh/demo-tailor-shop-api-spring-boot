@@ -12,10 +12,10 @@ import com.mazzee.dts.entity.UserDressType;
 
 @Repository
 public interface UserDressTypeRepo extends JpaRepository<UserDressType, Integer> {
-	@Query(value = "SELECT d.* FROM DTS_USER_DRESS_TYPE d WHERE d.USER_ID = :userId", nativeQuery = true)
+	@Query(value = "SELECT d.* FROM dts_user_dress_type d WHERE d.USER_ID = :userId", nativeQuery = true)
 	List<UserDressType> getDressTypeListByUserId(@Param("userId") int userId);
 
-	@Query(value = "SELECT d.* FROM DTS_USER_DRESS_TYPE d WHERE d.ID = :userDressTypeId", nativeQuery = true)
+	@Query(value = "SELECT d.* FROM dts_user_dress_type d WHERE d.ID = :userDressTypeId", nativeQuery = true)
 	Optional<UserDressType> getUserDressTypeByTypeId(@Param("userDressTypeId") int userDressTypeId);
 
 }

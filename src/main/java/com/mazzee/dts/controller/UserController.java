@@ -38,7 +38,7 @@ import com.mazzee.dts.utils.DtsUtils;
  *
  */
 @RestController
-@RequestMapping("api/user")
+@RequestMapping("api/user/")
 public class UserController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
@@ -55,7 +55,7 @@ public class UserController {
 		JwtTokenUtils = jwtTokenUtils;
 	}
 
-	@PostMapping(value = "/v1/signin", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE })
+	@PostMapping(value = "v1/signin", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE })
 	public ResponseEntity<UserDto> signin(@RequestParam("userName") String userName,
 			@RequestParam("password") String password) throws UserException {
 		String jwtToken = null;
@@ -77,7 +77,7 @@ public class UserController {
 		return responseEntity;
 	}
 
-	@PostMapping(value = "/v1/signup", consumes = { MediaType.APPLICATION_JSON_VALUE,
+	@PostMapping(value = "v1/signup", consumes = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE })
 	public ResponseEntity<ApiResponse<UserDto>> signup(@RequestBody UserDto user) throws DtsException {
 		LOGGER.info("Creating new user");
@@ -108,7 +108,7 @@ public class UserController {
 		return responseEntity;
 	}
 
-	@PostMapping(value = "/v1/updatePassword", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+	@PostMapping(value = "v1/updatePassword", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<ApiResponse<String>> updatePassword(@RequestParam("userName") String userName,
 			@RequestParam("oldPassword") String oldPassword, @RequestParam("newPassword") String newPassword)
@@ -133,7 +133,7 @@ public class UserController {
 		return responseEntity;
 	}
 
-	@PostMapping(value = "/v1/updateUser", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+	@PostMapping(value = "v1/updateUser", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<ApiResponse<UserDto>> updateUser(@RequestBody UserDto userDto) throws DtsException {
 		LOGGER.info("Update User");
@@ -186,7 +186,7 @@ public class UserController {
 		return responseEntity;
 	}
 
-	@PostMapping(value = "/v1/updateShop", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+	@PostMapping(value = "v1/updateShop", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<ApiResponse<UserDto>> updateShop(@RequestBody UserDto userDto) throws DtsException {
 		LOGGER.info("Update shop");
@@ -216,7 +216,7 @@ public class UserController {
 		return responseEntity;
 	}
 
-	@PostMapping(value = "/v1/forgotPassword", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE })
+	@PostMapping(value = "v1/forgotPassword", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE })
 	public ResponseEntity<ApiResponse<String>> forgotPassword(
 			@RequestParam(value = "userName", required = false) String userName,
 			@RequestParam(value = "email", required = false) String email) throws DtsException {

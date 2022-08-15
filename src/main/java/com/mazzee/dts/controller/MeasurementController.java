@@ -17,7 +17,7 @@ import com.mazzee.dts.service.MeasurementService;
  *
  */
 @RestController
-@RequestMapping("api/v1/measurements")
+@RequestMapping("api/measurement/")
 public class MeasurementController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(MeasurementController.class);
 	private MeasurementService measurementService;
@@ -27,7 +27,7 @@ public class MeasurementController {
 		this.measurementService = measurementService;
 	}
 
-//	@GetMapping("/measurement")
+//	@GetMapping("v1/measurement")
 //	public ResponseEntity<List<Measurement>> getMeasurementByDressId(
 //			@RequestParam(value = "dressId", required = false) Integer dressId) throws RecordNotFoundException {
 //		LOGGER.info("Get measurement for dress id {}", dressId);

@@ -26,7 +26,7 @@ import com.mazzee.dts.service.UserDressTypeService;
 import com.mazzee.dts.utils.DtsUtils;
 
 @RestController
-@RequestMapping("api/userDressType")
+@RequestMapping("api/userDressType/")
 public class UserDressTypeController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserDressTypeController.class);
 	private UserDressTypeService userDressTypeService;
@@ -63,8 +63,8 @@ public class UserDressTypeController {
 		return responseEntity;
 	}
 
-	@PostMapping(value = "/v1/updateUserDressType", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-			MediaType.APPLICATION_JSON_VALUE })
+	@PostMapping(value = "/v1/updateUserDressType", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<ApiResponse<UserDressTypeDto>> updateUserDressType(
 			@RequestBody UserDressTypeDto userDressTypeDto) throws DtsException {
 		LOGGER.info("Update User dress type");

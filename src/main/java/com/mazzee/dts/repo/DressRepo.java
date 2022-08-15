@@ -30,16 +30,16 @@ public interface DressRepo extends JpaRepository<Dress, Integer> {
 	@Query(value = "select * from dts_dress where dress_id = :dressId", nativeQuery = true)
 	Optional<Dress> getDressById(@Param("dressId") int dressId);
 
-	@Query(value = "SELECT * FROM DTS_DRESS WHERE CUSTOMER_ID = :customerId", nativeQuery = true)
+	@Query(value = "SELECT * FROM dts_dress WHERE CUSTOMER_ID = :customerId", nativeQuery = true)
 	List<Dress> getDressListByCustomerId(@Param("customerId") int customerId);
 
-	@Query(value = "SELECT DD.* FROM DTS_DRESS DD INNER JOIN DTS_CUSTOMER DC ON DD.CUSTOMER_ID = DC.CUSTOMER_ID AND DC.CUSTOMER_ID = :customerId INNER JOIN DTS_USER DU ON DC.USER_ID = DU.USER_ID AND DU.USER_ID = :userId", nativeQuery = true)
+	@Query(value = "SELECT DD.* FROM dts_dress DD INNER JOIN dts_customer DC ON DD.CUSTOMER_ID = DC.CUSTOMER_ID AND DC.CUSTOMER_ID = :customerId INNER JOIN dts_user DU ON DC.USER_ID = DU.USER_ID AND DU.USER_ID = :userId", nativeQuery = true)
 	List<Dress> getDressListByUserIdAndCustomerId(@Param("userId") int userId, @Param("customerId") int customerId);
 
-	@Query(value = "SELECT DD.* FROM DTS_DRESS DD INNER JOIN DTS_CUSTOMER DC ON DD.CUSTOMER_ID = DC.CUSTOMER_ID AND DC.USER_ID = :userId", nativeQuery = true, countQuery = "SELECT COUNT(DD.DRESS_ID) FROM DTS_DRESS DD INNER JOIN DTS_CUSTOMER DC ON DD.CUSTOMER_ID = DC.CUSTOMER_ID AND DC.USER_ID = :userId")
+	@Query(value = "SELECT DD.* FROM dts_dress DD INNER JOIN dts_customer DC ON DD.CUSTOMER_ID = DC.CUSTOMER_ID AND DC.USER_ID = :userId", nativeQuery = true, countQuery = "SELECT COUNT(DD.DRESS_ID) FROM dts_dress DD INNER JOIN dts_customer DC ON DD.CUSTOMER_ID = DC.CUSTOMER_ID AND DC.USER_ID = :userId")
 	Page<Dress> getDressListByUser(@Param("userId") int userId, Pageable pageable);
 
-	@Query(value = "SELECT DD.* FROM DTS_DRESS DD INNER JOIN DTS_CUSTOMER DC ON DD.CUSTOMER_ID = DC.CUSTOMER_ID AND DC.USER_ID = :userId INNER JOIN DTS_DRESS_TYPE DDT ON DD.DRESS_TYPE = DDT.TYPE_ID AND DDT.TYPE_NAME IN :dressType", nativeQuery = true, countQuery = "SELECT COUNT(DD.DRESS_ID) FROM DTS_DRESS DD INNER JOIN DTS_CUSTOMER DC ON DD.CUSTOMER_ID = DC.CUSTOMER_ID AND DC.USER_ID = :userId INNER JOIN DTS_DRESS_TYPE DDT ON DD.DRESS_TYPE = DDT.TYPE_ID AND DDT.TYPE_NAME IN :dressType")
+	@Query(value = "SELECT DD.* FROM dts_dress DD INNER JOIN dts_customer DC ON DD.CUSTOMER_ID = DC.CUSTOMER_ID AND DC.USER_ID = :userId INNER JOIN DTS_DRESS_TYPE DDT ON DD.DRESS_TYPE = DDT.TYPE_ID AND DDT.TYPE_NAME IN :dressType", nativeQuery = true, countQuery = "SELECT COUNT(DD.DRESS_ID) FROM dts_dress DD INNER JOIN dts_customer DC ON DD.CUSTOMER_ID = DC.CUSTOMER_ID AND DC.USER_ID = :userId INNER JOIN DTS_DRESS_TYPE DDT ON DD.DRESS_TYPE = DDT.TYPE_ID AND DDT.TYPE_NAME IN :dressType")
 	Page<Dress> getDressListByUserAndDressType(@Param("userId") int userId, @Param("dressType") List<String> dressType,
 			Pageable pageable);
 }
