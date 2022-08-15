@@ -107,6 +107,10 @@ public class DressService {
 		this.awsS3Util = awsS3Util;
 	}
 
+	public void setRootFolder(String rootFolder) {
+		this.rootFolder = rootFolder;
+	}
+
 	public List<Dress> getDressList(String dressType) {
 		List<Dress> dressList = null;
 		if (DtsUtils.isNullOrEmpty(dressType)) {
@@ -468,8 +472,8 @@ public class DressService {
 		if (!DtsUtils.isNullOrEmpty(fileMap)) {
 //			upload file to s3 storage
 			LOGGER.info("Uploading images to S3 storage");
-//			int uploadCount = awsS3Util.uploadFile(fileMap);
-//			LOGGER.info("Images uploading count {}", uploadCount);
+			int uploadCount = awsS3Util.uploadFile(fileMap);
+			LOGGER.info("Images uploading count {}", uploadCount);
 //			delete files that are created 
 			fileMap.values().stream().forEach(file -> {
 				try {
