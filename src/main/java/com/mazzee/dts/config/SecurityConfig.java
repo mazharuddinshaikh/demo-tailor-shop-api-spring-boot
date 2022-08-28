@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private static final String[] SWAGGER_URLS = { "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs" };
-	private static final String[] INSECURE_URLS = { "/api/user/**", "/images/**", "/dts-images/**", "/api/userHelp/**" };
+	private static final String[] INSECURE_URLS = { "/api/user/**", "/images/**", "/dts-images/**", "/html/**", "/api/userHelp/**" };
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
