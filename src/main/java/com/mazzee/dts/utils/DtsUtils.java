@@ -1,6 +1,8 @@
 package com.mazzee.dts.utils;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -28,13 +30,21 @@ public final class DtsUtils {
 	public static boolean isNullOrEmpty(String[] str) {
 		return getResultFromFunction(str, s -> Objects.isNull(s) || s.length == 0);
 	}
-	
+
 	public static <K, V> boolean isNullOrEmpty(Map<K, V> map) {
 		return getResultFromFunction(map, s -> Objects.isNull(s) || s.isEmpty());
 	}
 
-	public static <S, V> V getResultFromFunction(S value, Function<S, V> functionResolver) {
-		return functionResolver.apply(value);
+	public static String trim(String str) {
+		return getResultFromFunction(str, String::trim);
+	}
+
+	public static List<String> splitToList(String data, String delimeter) {
+		List<String> splittedList = null;
+		if (!isNullOrEmpty(data)) {
+			splittedList = getResultFromFunction(data, s -> Arrays.asList(s.split(delimeter)));
+		}
+		return splittedList;
 	}
 
 	public static boolean isValidEmail(String email) {
@@ -45,6 +55,10 @@ public final class DtsUtils {
 			isValidEmail = emailMatcher.matches();
 		}
 		return isValidEmail;
+	}
+
+	public static <S, V> V getResultFromFunction(S value, Function<S, V> functionResolver) {
+		return functionResolver.apply(value);
 	}
 
 }

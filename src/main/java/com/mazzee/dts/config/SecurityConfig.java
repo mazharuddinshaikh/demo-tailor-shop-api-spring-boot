@@ -36,15 +36,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private static final String[] SWAGGER_URLS = { "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs" };
-	private static final String[] INSECURE_URLS = { "/api/user/**", "/images/**", "/dts-images/**", "/html/**", "/api/userHelp/**" };
+	private static final String[] INSECURE_URLS = { "/api/user/**", "/images/**", "/dts-images/**", "/html/**",
+			"/api/userHelp/**", "/api/app/**" };
 	private static final String[] ACTUATOR_URLS = { "/actuator/**" };
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable().httpBasic().and().authorizeRequests().antMatchers(INSECURE_URLS).permitAll()
-				.antMatchers(SWAGGER_URLS).permitAll().antMatchers(ACTUATOR_URLS).permitAll().anyRequest().authenticated().and()
-				.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class).exceptionHandling()
-				.authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
+				.antMatchers(SWAGGER_URLS).permitAll().antMatchers(ACTUATOR_URLS).permitAll().anyRequest()
+				.authenticated().and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+				.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 
