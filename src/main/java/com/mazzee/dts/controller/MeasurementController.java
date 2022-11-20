@@ -1,12 +1,23 @@
 package com.mazzee.dts.controller;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mazzee.dts.dto.ApiError;
+import com.mazzee.dts.entity.Measurement;
+import com.mazzee.dts.exception.RecordNotFoundException;
 import com.mazzee.dts.service.MeasurementService;
+import com.mazzee.dts.utils.DtsUtils;
 
 /**
  * Class define all API related to measurements
@@ -27,21 +38,21 @@ public class MeasurementController {
 		this.measurementService = measurementService;
 	}
 
-//	@GetMapping("v1/measurement")
-//	public ResponseEntity<List<Measurement>> getMeasurementByDressId(
-//			@RequestParam(value = "dressId", required = false) Integer dressId) throws RecordNotFoundException {
-//		LOGGER.info("Get measurement for dress id {}", dressId);
-//		List<Measurement> measurementList = measurementService.getMeasureMents(dressId);
-//		ResponseEntity<List<Measurement>> responseEntity = null;
-//		if (!DtsUtils.isNullOrEmpty(measurementList)) {
-//			LOGGER.info("Found measurement for dress id {} count {}", dressId, measurementList.size());
-//			responseEntity = ResponseEntity.ok().body(measurementList);
-//		} else {
-//			ApiError apiError = new ApiError(HttpStatus.NO_CONTENT.value(),
-//					"Measurement not found for dress id " + dressId);
-//			throw new RecordNotFoundException(apiError);
-//		}
-//		return responseEntity;
-//	}
+	@GetMapping("v1/measurement")
+	public ResponseEntity<List<Measurement>> getMeasurementByDressId(
+			@RequestParam(value = "dressId", required = false) Integer dressId) throws RecordNotFoundException {
+		LOGGER.info("Get measurement for dress id {}", dressId);
+		List<Measurement> measurementList = measurementService.getMeasureMentByDressId(Arrays.asList(dressId));
+		ResponseEntity<List<Measurement>> responseEntity = null;
+		if (!DtsUtils.isNullOrEmpty(measurementList)) {
+			LOGGER.info("Found measurement for dress id {} count {}", dressId, measurementList.size());
+			responseEntity = ResponseEntity.ok().body(measurementList);
+		} else {
+			ApiError apiError = new ApiError(HttpStatus.NO_CONTENT.value(),
+					"Measurement not found for dress id " + dressId);
+			throw new RecordNotFoundException(apiError);
+		}
+		return responseEntity;
+	}
 
 }
