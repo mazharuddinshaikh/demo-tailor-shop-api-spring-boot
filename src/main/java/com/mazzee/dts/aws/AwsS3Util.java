@@ -9,21 +9,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
+//import com.amazonaws.services.s3.AmazonS3Client;
+//import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.mazzee.dts.utils.DtsUtils;
 
 @Service
 public class AwsS3Util {
 	private final static Logger LOGGER = LoggerFactory.getLogger(AwsS3Util.class);
-	private AmazonS3Client amazonS3Client;
-	@Value("${dts.amazon.s3.bucketname}")
+//	private AmazonS3Client amazonS3Client;
+//	@Value("${dts.amazon.s3.bucketname}")
 	private String amazonS3BucketName;
-	@Value("${dts.amazon.s3.url}")
+//	@Value("${dts.amazon.s3.url}")
 	private String amazonS3Url = "";
-	@Value("${cloud.aws.region.static}")
+//	@Value("${cloud.aws.region.static}")
 	private String amazonS3Region = "";
-	@Value("${dts.amazon.s3.bucketname.rootfolder}")
+//	@Value("${dts.amazon.s3.bucketname.rootfolder}")
 	private String amazonS3RootFolder = "";
 
 //	public AmazonS3 getAmazonS3Instance() {
@@ -44,10 +44,10 @@ public class AwsS3Util {
 //			System.out.println(bucket.getName());
 //		}
 //	}
-	@Autowired
-	public void setAmazonS3Client(AmazonS3Client amazonS3Client) {
-		this.amazonS3Client = amazonS3Client;
-	}
+//	@Autowired
+//	public void setAmazonS3Client(AmazonS3Client amazonS3Client) {
+//		this.amazonS3Client = amazonS3Client;
+//	}
 
 	public void setAmazonS3BucketName(String amazonS3BucketName) {
 		this.amazonS3BucketName = amazonS3BucketName;
@@ -100,8 +100,8 @@ public class AwsS3Util {
 		LOGGER.info("Uploading image {} to s3 storage", s3Key);
 		boolean isFileUploaded = false;
 		if (!DtsUtils.isNullOrEmpty(s3Key)) {
-			amazonS3Client.putObject(amazonS3BucketName, s3Key, file);
-			amazonS3Client.setObjectAcl(amazonS3BucketName, s3Key, CannedAccessControlList.PublicReadWrite);
+//			amazonS3Client.putObject(amazonS3BucketName, s3Key, file);
+//			amazonS3Client.setObjectAcl(amazonS3BucketName, s3Key, CannedAccessControlList.PublicReadWrite);
 			isFileUploaded = true;
 			LOGGER.info("Image uploaded successfully");
 		}

@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
-import com.mazzee.dts.aws.AwsS3Util;
+//import com.mazzee.dts.aws.AwsS3Util;
 
 /**
  * Main class use to start the application
@@ -23,12 +23,12 @@ import com.mazzee.dts.aws.AwsS3Util;
 public class DemoTailorShopApplication implements CommandLineRunner {
 	private final static Logger LOGGER = LoggerFactory.getLogger(DemoTailorShopApplication.class);
 
-	private AwsS3Util awsS3Util;
-
-	@Autowired
-	public void setAwsS3Util(AwsS3Util awsS3Util) {
-		this.awsS3Util = awsS3Util;
-	}
+//	private AwsS3Util awsS3Util;
+//
+//	@Autowired
+//	public void setAwsS3Util(AwsS3Util awsS3Util) {
+//		this.awsS3Util = awsS3Util;
+//	}
 
 	public static void main(String[] args) {
 		LOGGER.info("Demo tailor application started");

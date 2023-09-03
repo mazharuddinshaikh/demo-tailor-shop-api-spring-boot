@@ -64,7 +64,9 @@ public class DressService {
 	private UserDressTypeService userDressTypeService;
 	private DressDtoMapper dressDtoMapper;
 	private AwsS3Util awsS3Util;
-	@Value("${dts.amazon.s3.bucketname.rootfolder}")
+//	@Value("${dts.amazon.s3.bucketname.rootfolder}")
+//	private String rootFolder;
+	@Value("${external.image.path}")
 	private String rootFolder;
 
 	@Autowired
