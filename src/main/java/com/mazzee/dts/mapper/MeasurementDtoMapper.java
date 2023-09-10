@@ -12,17 +12,27 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.mazzee.dts.dto.DtsImageProperties;
 import com.mazzee.dts.dto.MeasurementDto;
+import com.mazzee.dts.dto.MeasurementImageDto;
 import com.mazzee.dts.entity.Measurement;
+import com.mazzee.dts.entity.MeasurementImage;
+import com.mazzee.dts.utils.DtsConstant;
 import com.mazzee.dts.utils.DtsUtils;
 
 @Service
 public class MeasurementDtoMapper {
 	private final DtsModelMapper dtsModelMapper;
+	private DtsImageProperties dtsImageProperties;
 
 	@Autowired
 	public MeasurementDtoMapper(DtsModelMapper dtsModelMapper) {
 		this.dtsModelMapper = dtsModelMapper;
+	}
+
+	@Autowired
+	public void setMeasurementImageUtil(DtsImageProperties dtsImageProperties) {
+		this.dtsImageProperties = dtsImageProperties;
 	}
 
 	private ModelMapper getMeasurementToDtoMapper() {
@@ -35,6 +45,36 @@ public class MeasurementDtoMapper {
 				imageList = result.collect(Collectors.toList());
 			}
 			return imageList;
+		};
+
+		Converter<List<MeasurementImage>, MeasurementImageDto> measurementImageDtoConverter = context -> {
+			MeasurementImageDto measurementImageDto = new MeasurementImageDto();
+			List<MeasurementImage> measurementList = context.getSource();
+			List<String> rawImageList = measurementList.stream()
+					.filter(image -> image.getImageType().equals(DtsConstant.RAW))
+					.map(image -> dtsImageProperties.getBasePath() + "/" + dtsImageProperties.getBaseFolder() + "/"
+							 + image.getImagePath() + "/" + image.getImageName())
+					.collect(Collectors.toList());
+			List<String> patternImageList = measurementList.stream()
+					.filter(image -> image.getImageType().equals(DtsConstant.PATTERN))
+					.map(image -> dtsImageProperties.getBasePath() + "/" + dtsImageProperties.getBaseFolder() + "/"
+							+ image.getImagePath() + "/" + image.getImageName())
+					.collect(Collectors.toList());
+			List<String> seavedImageList = measurementList.stream()
+					.filter(image -> image.getImageType().equals(DtsConstant.SEAVED))
+					.map(image -> dtsImageProperties.getBasePath() + "/" + dtsImageProperties.getBaseFolder() + "/"
+							+ image.getImagePath() + "/" + image.getImageName())
+					.collect(Collectors.toList());
+			List<String> measurementImageList = measurementList.stream()
+					.filter(image -> image.getImageType().equals(DtsConstant.MEASUREMENT))
+					.map(image -> dtsImageProperties.getBasePath() + "/" + dtsImageProperties.getBaseFolder() + "/"
+							+ image.getImagePath() + "/" + image.getImageName())
+					.collect(Collectors.toList());
+			measurementImageDto.setMeasurementImageList(measurementImageList);
+			measurementImageDto.setPatternImageList(patternImageList);
+			measurementImageDto.setSeavedImageList(seavedImageList);
+			measurementImageDto.setRawImageList(rawImageList);
+			return measurementImageDto;
 		};
 		ModelMapper modelMapper = new ModelMapper();
 		Converter<LocalDateTime, String> dateTimeConverter = dtsModelMapper.getDateTimeConverter();
@@ -49,6 +89,8 @@ public class MeasurementDtoMapper {
 			mapper.using(imageToListConverter).map(Measurement::getPatternImage, MeasurementDto::setPatternImageList);
 			mapper.using(imageToListConverter).map(Measurement::getRawDressImage, MeasurementDto::setRawDressImageList);
 			mapper.using(imageToListConverter).map(Measurement::getSeavedImage, MeasurementDto::setSeavedImageList);
+			mapper.using(measurementImageDtoConverter).map(Measurement::getMeasurementImageList,
+					MeasurementDto::setMeasurementImage);
 		});
 		return modelMapper;
 	}

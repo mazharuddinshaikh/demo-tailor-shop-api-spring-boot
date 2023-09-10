@@ -11,6 +11,7 @@ public class MeasurementDto {
 	private String comment;
 	private String createdAt;
 	private String updatedAt;
+	private MeasurementImageDto measurementImage;
 
 	public MeasurementDto() {
 		super();
@@ -78,6 +79,14 @@ public class MeasurementDto {
 
 	public void setUpdatedAt(String updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public MeasurementImageDto getMeasurementImage() {
+		return measurementImage;
+	}
+
+	public void setMeasurementImage(MeasurementImageDto measurementImage) {
+		this.measurementImage = measurementImage;
 	}
 
 }

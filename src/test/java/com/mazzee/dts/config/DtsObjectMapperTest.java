@@ -62,10 +62,10 @@ class DtsObjectMapperTest {
 //		System.out.println(date);
 //	}
 //
-//	@Test
-//	public void testDateConverter() {
-//		DateTimeFormatter defaultFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
-//		System.out.println(defaultFormat.format(LocalDate.now()));
-//	}
+	@Test
+	public void testDateConverter() {
+		DateTimeFormatter defaultFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
+		System.out.println(defaultFormat.format(LocalDate.now()));
+	}
 
 }

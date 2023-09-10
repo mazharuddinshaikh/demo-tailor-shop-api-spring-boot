@@ -1,6 +1,7 @@
 package com.mazzee.dts.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -43,6 +45,8 @@ public class Measurement {
 	private LocalDateTime createdAt;
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
+	@OneToMany(mappedBy = "measurement", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private List<MeasurementImage> measurementImageList;
 
 	public Measurement() {
 		super();
@@ -118,6 +122,14 @@ public class Measurement {
 
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public List<MeasurementImage> getMeasurementImageList() {
+		return measurementImageList;
+	}
+
+	public void setMeasurementImageList(List<MeasurementImage> measurementImageList) {
+		this.measurementImageList = measurementImageList;
 	}
 
 }

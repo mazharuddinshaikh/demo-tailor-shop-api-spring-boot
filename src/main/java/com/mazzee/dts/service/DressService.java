@@ -1,19 +1,9 @@
 package com.mazzee.dts.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -25,13 +15,11 @@ import javax.transaction.Transactional.TxType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.mazzee.dts.aws.AwsS3Util;
 import com.mazzee.dts.dto.CustomerDto;
 import com.mazzee.dts.dto.DressDetailDto;
 import com.mazzee.dts.dto.DressDto;
@@ -63,11 +51,7 @@ public class DressService {
 	private MeasurementService measurementService;
 	private UserDressTypeService userDressTypeService;
 	private DressDtoMapper dressDtoMapper;
-	private AwsS3Util awsS3Util;
-//	@Value("${dts.amazon.s3.bucketname.rootfolder}")
-//	private String rootFolder;
-	@Value("${external.image.path}")
-	private String rootFolder;
+	private MeasurementImageService measurementImageService;
 
 	@Autowired
 	public void setUserService(UserService userService) {
@@ -105,12 +89,8 @@ public class DressService {
 	}
 
 	@Autowired
-	public void setAwsS3Util(AwsS3Util awsS3Util) {
-		this.awsS3Util = awsS3Util;
-	}
-
-	public void setRootFolder(String rootFolder) {
-		this.rootFolder = rootFolder;
+	public void setMeasurementImageService(MeasurementImageService measurementImageService) {
+		this.measurementImageService = measurementImageService;
 	}
 
 	public List<Dress> getDressList(String dressType) {
@@ -213,7 +193,6 @@ public class DressService {
 		}
 
 //		update customer
-//		CustomerDto customerDto = dressDetailDto.getCustomer();
 		if (Objects.nonNull(customerDto)) {
 			customer = customerService.updateCustomer(customerDto, user);
 		}
@@ -299,7 +278,7 @@ public class DressService {
 				}
 			}
 			if (!DtsUtils.isNullOrEmpty(dressDto.getOrderDate())) {
-				LocalDateTime orderDate = getFormattedDate(dressDto.getOrderDate());
+				LocalDateTime orderDate = DtsUtils.convertStringToDate(dressDto.getOrderDate(), DtsUtils.DATE_FORMAT_1);
 				dress.setOrderDate(orderDate);
 			} else {
 				if (Objects.nonNull(customer) && Objects.nonNull(customer.getOrderDate())) {
@@ -307,7 +286,8 @@ public class DressService {
 				}
 			}
 			if (!DtsUtils.isNullOrEmpty(dressDto.getDeliveryDate())) {
-				LocalDateTime deliveryDate = getFormattedDate(dressDto.getDeliveryDate());
+				LocalDateTime deliveryDate = DtsUtils.convertStringToDate(dressDto.getDeliveryDate(),
+						DtsUtils.DATE_FORMAT_1);
 				dress.setDeliveryDate(deliveryDate);
 			} else {
 				if (Objects.nonNull(customer) && Objects.nonNull(customer.getDeliveryDate())) {
@@ -347,19 +327,16 @@ public class DressService {
 	public boolean updateDressImage(int userId, int customerId, List<MultipartFile> files) {
 		LOGGER.info("Update dress images");
 		boolean isDressImagesUpdated = false;
-		Map<String, File> fileMap = new HashMap<>();
-		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyyMMdd");
-		final String currentDate = dateFormat.format(LocalDate.now());
-//		DressDetailDto dressDetailDto = null;
 
 		Set<Integer> dressIdList = null;
 		if (!DtsUtils.isNullOrEmpty(files)) {
 //			file names must come in D_dressid_measurementtype_incrementnumber.extension
 			for (MultipartFile multipartFile : files) {
+				int dressId = 0;
 				dressIdList = new HashSet<>();
 				String fileName = multipartFile.getOriginalFilename();
 				String[] splitNames = fileName.split("_");
-				int dressId = Integer.parseInt(splitNames[1].substring(0));
+				dressId = Integer.parseInt(splitNames[1].substring(0));
 				dressIdList.add(dressId);
 			}
 		}
@@ -370,7 +347,6 @@ public class DressService {
 				Measurement measurement = null;
 				Optional<Dress> optionalDress = getDressByDressId(dressId);
 				Dress dress = null;
-//			Optional<Measurement> measurementOptional = measurementService.getMeasureMentByDressId(dressId);
 				if (optionalDress.isPresent()) {
 					dress = optionalDress.get();
 					measurement = dress.getMeasurement();
@@ -378,88 +354,13 @@ public class DressService {
 						measurement = new Measurement();
 						measurement.setDress(optionalDress.get());
 					}
-					List<MultipartFile> dressIdFiles = getMeasurementMultipartFiles(files,
+					List<MultipartFile> dressIdFiles = DtsUtils.getMeasurementMultipartFiles(files,
 							DtsConstant.DRESS + DtsConstant.UNDERSCORE + dressId);
 					if (!DtsUtils.isNullOrEmpty(dressIdFiles)) {
-						LOGGER.info("Image found for dress id {}", dressId);
-						String rawImage = measurement.getRawDressImage();
-						String patternImage = measurement.getPatternImage();
-						String seavedImage = measurement.getSeavedImage();
-						String measurementImage = measurement.getMeasurementImage();
-						List<MultipartFile> rawImageList = getMeasurementMultipartFiles(files, DtsConstant.DRESS
-								+ DtsConstant.UNDERSCORE + dressId + DtsConstant.UNDERSCORE + DtsConstant.RAW);
-						List<MultipartFile> patternImageList = getMeasurementMultipartFiles(files, DtsConstant.DRESS
-								+ DtsConstant.UNDERSCORE + dressId + DtsConstant.UNDERSCORE + DtsConstant.PATTERN);
-						List<MultipartFile> seavedImageList = getMeasurementMultipartFiles(files, DtsConstant.DRESS
-								+ DtsConstant.UNDERSCORE + dressId + DtsConstant.UNDERSCORE + DtsConstant.SEAVED);
-						List<MultipartFile> measurementImageList = getMeasurementMultipartFiles(files, DtsConstant.DRESS
-								+ DtsConstant.UNDERSCORE + dressId + DtsConstant.UNDERSCORE + DtsConstant.MEASUREMENT);
-
-//				raw image
-						if (!DtsUtils.isNullOrEmpty(rawImageList)) {
-							for (MultipartFile multipartFile : rawImageList) {
-								String fileExtension = getFileExtension(multipartFile);
-								String fileName = getFileNameFormat(userId, currentDate, dress, DtsConstant.RAW);
-								int i = getIncrementCounter(rawImage, fileName);
-								fileName += i + "." + fileExtension;
-								rawImage = getUpdatedValue(rawImage, fileName);
-								File uploadFile = getUploadFile(multipartFile, fileName);
-								String s3Key = getFileNameKey(userId, dress, fileName);
-								fileMap.put(s3Key, uploadFile);
-//							uploadFileList.add(uploadFile);
-							}
-						}
-//paattern
-						if (!DtsUtils.isNullOrEmpty(patternImageList)) {
-							for (MultipartFile multipartFile : patternImageList) {
-								String fileExtension = getFileExtension(multipartFile);
-								String fileName = getFileNameFormat(userId, currentDate, dress, DtsConstant.PATTERN);
-								int i = getIncrementCounter(patternImage, fileName);
-								fileName += i + "." + fileExtension;
-								patternImage = getUpdatedValue(patternImage, fileName);
-								File uploadFile = getUploadFile(multipartFile, fileName);
-								String s3Key = getFileNameKey(userId, dress, fileName);
-								fileMap.put(s3Key, uploadFile);
-//							uploadFileList.add(uploadFile);
-							}
-						}
-//				seaved
-						if (!DtsUtils.isNullOrEmpty(seavedImageList)) {
-							for (MultipartFile multipartFile : seavedImageList) {
-								String fileExtension = getFileExtension(multipartFile);
-								String fileName = getFileNameFormat(userId, currentDate, dress, DtsConstant.SEAVED);
-								int i = getIncrementCounter(seavedImage, fileName);
-								fileName += i + "." + fileExtension;
-								seavedImage = getUpdatedValue(seavedImage, fileName);
-								File uploadFile = getUploadFile(multipartFile, fileName);
-								String s3Key = getFileNameKey(userId, dress, fileName);
-								fileMap.put(s3Key, uploadFile);
-//							uploadFileList.add(uploadFile);
-							}
-						}
-//				measurement
-						if (!DtsUtils.isNullOrEmpty(measurementImageList)) {
-							for (MultipartFile multipartFile : measurementImageList) {
-								String fileExtension = getFileExtension(multipartFile);
-								String fileName = getFileNameFormat(userId, currentDate, dress,
-										DtsConstant.MEASUREMENT);
-								int i = getIncrementCounter(measurementImage, fileName);
-								fileName += i + "." + fileExtension;
-								measurementImage = getUpdatedValue(measurementImage, fileName);
-								File uploadFile = getUploadFile(multipartFile, fileName);
-								String s3Key = getFileNameKey(userId, dress, fileName);
-								fileMap.put(s3Key, uploadFile);
-//							uploadFileList.add(uploadFile);
-							}
-						}
-						LOGGER.info("Update images measurement for measurement id {}", measurement.getMeasurementId());
-						measurement.setRawDressImage(rawImage);
-						measurement.setPatternImage(patternImage);
-						measurement.setSeavedImage(seavedImage);
-						measurement.setMeasurementImage(measurementImage);
 						measurement.setUpdatedAt(LocalDateTime.now());
 						measurement = measurementService.updateMeasurement(measurement);
-
+						LOGGER.info("Image found for dress id {}", dressId);
+						measurementImageService.uploadMeasurementImage(files, measurement, userId, dress);
 						if (Objects.nonNull(measurement)) {
 							isDressImagesUpdated = true;
 							LOGGER.info("measurement updated successfully for measurement id {} and dress id {}",
@@ -471,93 +372,7 @@ public class DressService {
 				}
 			}
 		}
-		if (!DtsUtils.isNullOrEmpty(fileMap)) {
-//			upload file to s3 storage
-			LOGGER.info("Uploading images to S3 storage");
-			int uploadCount = awsS3Util.uploadFile(fileMap);
-			LOGGER.info("Images uploading count {}", uploadCount);
-//			delete files that are created 
-			fileMap.values().stream().forEach(file -> {
-				try {
-					Files.deleteIfExists(file.toPath());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			});
-//			dressDetailDto = getDressDetail(userId, customerId);
-		}
 		return isDressImagesUpdated;
-	}
-
-	private String getUpdatedValue(String imageName, String fileName) {
-		if (!DtsUtils.isNullOrEmpty(imageName) && !imageName.trim().isEmpty()) {
-			imageName += "||" + fileName;
-		} else {
-			imageName = fileName;
-		}
-		return imageName;
-	}
-
-	private String getFileNameKey(int userId, Dress dress, String fileName) {
-		String s3Key = rootFolder + "/user/" + DtsConstant.USER + userId + "/customer/" + DtsConstant.CUSTOMER
-				+ dress.getCustomer().getCustomerId() + "/dress/" + DtsConstant.DRESS + dress.getDressId() + "/"
-				+ fileName;
-		return s3Key;
-	}
-
-	private File getUploadFile(MultipartFile multipartFile, String fileName) {
-		File file = null;
-		Path path = Paths.get(fileName);
-		try {
-			multipartFile.transferTo(path);
-			file = path.toFile();
-		} catch (IllegalStateException | IOException e) {
-			e.printStackTrace();
-		}
-		return file;
-	}
-
-	private List<MultipartFile> getMeasurementMultipartFiles(List<MultipartFile> files, String startName) {
-		return files.stream().filter(file -> file.getOriginalFilename().startsWith(startName))
-				.collect(Collectors.toList());
-	}
-
-	private String getFileExtension(MultipartFile multipartFile) {
-		return multipartFile.getOriginalFilename().substring(multipartFile.getOriginalFilename().lastIndexOf(".") + 1);
-	}
-
-	private int getIncrementCounter(String rawImage, String fileName) {
-		int incrementCounter = 1;
-		boolean isIncreasing = false;
-		if (!DtsUtils.isNullOrEmpty(rawImage)) {
-			if (rawImage.contains(fileName)) {
-				isIncreasing = true;
-				while (isIncreasing) {
-					incrementCounter++;
-					if (!rawImage.contains(fileName + incrementCounter)) {
-						isIncreasing = false;
-					}
-				}
-			}
-		}
-		return incrementCounter;
-	}
-
-	private String getFileNameFormat(int userId, final String currentDate, Dress dress, String measuremetnType) {
-		String fileName = DtsConstant.USER + userId + DtsConstant.UNDERSCORE + DtsConstant.CUSTOMER
-				+ dress.getCustomer().getCustomerId() + DtsConstant.UNDERSCORE + DtsConstant.DRESS + dress.getDressId()
-				+ DtsConstant.UNDERSCORE + DtsConstant.FILTER_BY_DRESS_TYPE + dress.getUserDressType().getId()
-				+ DtsConstant.UNDERSCORE + measuremetnType + DtsConstant.UNDERSCORE + currentDate
-				+ DtsConstant.UNDERSCORE;
-		return fileName;
-	}
-
-	private LocalDateTime getFormattedDate(String date) {
-		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MMM/yyyy");
-		LocalDate parsedLocalDate = LocalDate.parse(date, dateTimeFormatter);
-		LocalDateTime localDateTime = LocalDateTime.of(parsedLocalDate, LocalTime.now());
-		return localDateTime;
 	}
 
 }
