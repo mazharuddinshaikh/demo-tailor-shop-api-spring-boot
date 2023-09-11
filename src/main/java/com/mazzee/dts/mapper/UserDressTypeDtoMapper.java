@@ -6,7 +6,6 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.modelmapper.spi.MappingContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mazzee.dts.dto.UserDressTypeDto;
@@ -16,27 +15,10 @@ import com.mazzee.dts.entity.UserDressType;
 
 @Service
 public class UserDressTypeDtoMapper {
-	private final DtsModelMapper dtsModelMapper;
-
-//
-	@Autowired
-	public UserDressTypeDtoMapper(DtsModelMapper dtsModelMapper) {
-		this.dtsModelMapper = dtsModelMapper;
-	}
 
 	private ModelMapper getUserDressTypeToDtoMapper() {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-//		Converter<DressType, Integer> dressTypeIdConverter = new Converter<DressType, Integer>() {
-//
-//			@Override
-//			public Integer convert(MappingContext<DressType, Integer> context) {
-//				// TODO Auto-generated method stub
-//				DressType dressType = context.getSource();
-//				return dressType.getTypeId();
-//			}
-//		};
 
 		Converter<User, Integer> userToIdConverter = context -> {
 			User user = context.getSource();
@@ -50,7 +32,6 @@ public class UserDressTypeDtoMapper {
 
 			@Override
 			public String convert(MappingContext<DressType, String> context) {
-				// TODO Auto-generated method stub
 				DressType dressType = context.getSource();
 				return dressType.getTypeName();
 			}
@@ -59,7 +40,6 @@ public class UserDressTypeDtoMapper {
 
 			@Override
 			public String convert(MappingContext<DressType, String> context) {
-				// TODO Auto-generated method stub
 				DressType dressType = context.getSource();
 				return dressType.getTypeDescription();
 			}
@@ -68,7 +48,6 @@ public class UserDressTypeDtoMapper {
 
 			@Override
 			public String convert(MappingContext<DressType, String> context) {
-				// TODO Auto-generated method stub
 				DressType dressType = context.getSource();
 				return dressType.getComment();
 			}
@@ -76,7 +55,6 @@ public class UserDressTypeDtoMapper {
 
 		modelMapper.typeMap(UserDressType.class, UserDressTypeDto.class).addMappings(mapper -> {
 			mapper.map(UserDressType::getId, UserDressTypeDto::setUserDressTypeId);
-//			mapper.using(dressTypeIdConverter).map(UserDressType::getDressType, UserDressTypeDto::setDressTypeId);
 			mapper.using(dressTypeNameConverter).map(UserDressType::getDressType, UserDressTypeDto::setTypeName);
 			mapper.using(dressTypeDescriptionConverter).map(UserDressType::getDressType,
 					UserDressTypeDto::setTypeDescription);

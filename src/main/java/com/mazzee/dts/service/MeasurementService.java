@@ -24,19 +24,13 @@ import com.mazzee.dts.utils.DtsUtils;
  */
 @Service
 public class MeasurementService {
-	private final static Logger LOGGER = LoggerFactory.getLogger(MeasurementService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MeasurementService.class);
 	private MeasurementRepo measurementRepo;
-//	private AwsS3Util awsS3Util;
 
 	@Autowired
 	public void setMeasurementRepo(MeasurementRepo measurementRepo) {
 		this.measurementRepo = measurementRepo;
 	}
-
-//	@Autowired
-//	public void setAwsS3Util(AwsS3Util awsS3Util) {
-//		this.awsS3Util = awsS3Util;
-//	}
 
 	public Optional<Measurement> getMeasureMentByDressId(Integer dressId) {
 		LOGGER.info("Get measurement for dress id {}", dressId);

@@ -14,9 +14,7 @@ public class DressDetailDto {
 	private List<DressDto> dressList;
 	private InvoiceDto customerInvoice;
 
-	public DressDetailDto() {
-	}
-
+	
 	public CustomerDto getCustomer() {
 		return customer;
 	}

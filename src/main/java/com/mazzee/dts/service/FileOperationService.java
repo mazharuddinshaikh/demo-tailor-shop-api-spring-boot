@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class FileOperationService {
-	private final static Logger LOGGER = LoggerFactory.getLogger(FileOperationService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(FileOperationService.class);
 
 	public boolean uploadFile(String path, String fileName, MultipartFile multipartFile) {
 		boolean isFileUploaded = false;

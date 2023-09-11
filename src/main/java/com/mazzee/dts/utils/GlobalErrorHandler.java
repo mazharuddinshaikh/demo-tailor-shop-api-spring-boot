@@ -26,7 +26,7 @@ import com.mazzee.dts.exception.UserException;
  */
 @ControllerAdvice
 public class GlobalErrorHandler {
-	private final static Logger LOGGER = LoggerFactory.getLogger(GlobalErrorHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GlobalErrorHandler.class);
 
 	@ExceptionHandler(value = RecordNotFoundException.class)
 	public ResponseEntity<ApiError> recordNotFoundException(RecordNotFoundException exception) {

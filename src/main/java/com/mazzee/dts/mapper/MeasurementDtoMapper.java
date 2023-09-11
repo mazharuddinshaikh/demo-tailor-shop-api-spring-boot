@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.modelmapper.Converter;
@@ -42,7 +41,7 @@ public class MeasurementDtoMapper {
 			List<String> imageList = null;
 			if (!DtsUtils.isNullOrEmpty(measurementImage)) {
 				Stream<String> result = pattern.splitAsStream(measurementImage);
-				imageList = result.collect(Collectors.toList());
+				imageList = result.toList();
 			}
 			return imageList;
 		};
@@ -53,23 +52,23 @@ public class MeasurementDtoMapper {
 			List<String> rawImageList = measurementList.stream()
 					.filter(image -> image.getImageType().equals(DtsConstant.RAW))
 					.map(image -> dtsImageProperties.getBasePath() + "/" + dtsImageProperties.getBaseFolder() + "/"
-							 + image.getImagePath() + "/" + image.getImageName())
-					.collect(Collectors.toList());
+							+ image.getImagePath() + "/" + image.getImageName())
+					.toList();
 			List<String> patternImageList = measurementList.stream()
 					.filter(image -> image.getImageType().equals(DtsConstant.PATTERN))
 					.map(image -> dtsImageProperties.getBasePath() + "/" + dtsImageProperties.getBaseFolder() + "/"
 							+ image.getImagePath() + "/" + image.getImageName())
-					.collect(Collectors.toList());
+					.toList();
 			List<String> seavedImageList = measurementList.stream()
 					.filter(image -> image.getImageType().equals(DtsConstant.SEAVED))
 					.map(image -> dtsImageProperties.getBasePath() + "/" + dtsImageProperties.getBaseFolder() + "/"
 							+ image.getImagePath() + "/" + image.getImageName())
-					.collect(Collectors.toList());
+					.toList();
 			List<String> measurementImageList = measurementList.stream()
 					.filter(image -> image.getImageType().equals(DtsConstant.MEASUREMENT))
 					.map(image -> dtsImageProperties.getBasePath() + "/" + dtsImageProperties.getBaseFolder() + "/"
 							+ image.getImagePath() + "/" + image.getImageName())
-					.collect(Collectors.toList());
+					.toList();
 			measurementImageDto.setMeasurementImageList(measurementImageList);
 			measurementImageDto.setPatternImageList(patternImageList);
 			measurementImageDto.setSeavedImageList(seavedImageList);

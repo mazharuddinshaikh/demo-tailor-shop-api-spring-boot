@@ -29,7 +29,7 @@ import com.mazzee.dts.utils.DtsUtils;
 @RestController
 @RequestMapping("api/userHelp/")
 public class UserHelpController {
-	private final static Logger LOGGER = LoggerFactory.getLogger(UserHelpController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserHelpController.class);
 	private UserHelpService userHelpService;
 	private EmailService emailService;
 

@@ -30,13 +30,12 @@ public class SwaggerConfig {
 //	
 	@Bean
 	public Docket docket() {
-		Docket docket = new Docket(DocumentationType.OAS_30)
+		return new Docket(DocumentationType.OAS_30)
 				.apiInfo(new ApiInfoBuilder().title("Tailor shop API").description("API for tailor shop")
 						.contact(new Contact("Mazharuddin Shaikh", "test.dts.com", "test.mazhar@gmail.com"))
 						.version("1.0.0").license("Open licence free for all").build())
 				.securityContexts(Arrays.asList(securityContext())).securitySchemes(Arrays.asList(apiKey())).select()
 				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build();
-		return docket;
 	}
 
 	private ApiKey apiKey() {

@@ -67,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
-	};
+	}
 
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
@@ -75,16 +75,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		configuration.setAllowedOrigins(Arrays.asList("*"));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 		configuration.setAllowedHeaders(Arrays.asList("*"));
-//		configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
 		// configuration.setExposedHeaders(Arrays.asList("x-auth-token"));
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
-
-//	@Override
-//	public void configure(WebSecurity web) throws Exception {
-//		web.ignoring().antMatchers("/api/v1/user/**");
-//	}
 
 }

@@ -40,10 +40,10 @@ import com.mazzee.dts.utils.DtsUtils;
 @RestController
 @RequestMapping("api/user/")
 public class UserController {
-	private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 	private UserService userService;
-	private JwtTokenUtils JwtTokenUtils;
+	private JwtTokenUtils jwtTokenUtils;
 
 	@Autowired
 	public void setUserService(UserService userService) {
@@ -52,7 +52,7 @@ public class UserController {
 
 	@Autowired
 	public void setJwtTokenUtils(JwtTokenUtils jwtTokenUtils) {
-		JwtTokenUtils = jwtTokenUtils;
+		this.jwtTokenUtils = jwtTokenUtils;
 	}
 
 	@PostMapping(value = "v1/signin", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE })
@@ -69,7 +69,7 @@ public class UserController {
 		};
 		UserDto loggedInUser = userService.signin(userName, password).orElseThrow(userExceptionSupplier);
 		LOGGER.info("User found userName - {}", loggedInUser.getUserName());
-		jwtToken = JwtTokenUtils.generateToken(loggedInUser);
+		jwtToken = jwtTokenUtils.generateToken(loggedInUser);
 		if (!DtsUtils.isNullOrEmpty(jwtToken)) {
 			loggedInUser.setAuthenticationToken(jwtToken);
 		}
@@ -98,7 +98,7 @@ public class UserController {
 		user = userService.addUser(user);
 		if (Objects.nonNull(user)) {
 			message = "User created Successfully ";
-			LOGGER.info(message + "{}", user.getUserName());
+			LOGGER.info("{} {}", message, user.getUserName());
 			ApiResponse<UserDto> userResponse = new ApiResponse<>();
 			userResponse.setHttpStatus(HttpStatus.OK.value());
 			userResponse.setMessage(message);
@@ -172,7 +172,7 @@ public class UserController {
 			apiError = new ApiError(HttpStatus.BAD_REQUEST.value(), "Something went wrong! User not updated");
 			throw new DtsException(apiError);
 		}
-		jwtToken = JwtTokenUtils.generateToken(updatedUser);
+		jwtToken = jwtTokenUtils.generateToken(updatedUser);
 		if (!DtsUtils.isNullOrEmpty(jwtToken)) {
 			updatedUser.setAuthenticationToken(jwtToken);
 		}
@@ -200,19 +200,17 @@ public class UserController {
 			throw new DtsException(apiError);
 		}
 		UserDto updatedUser = userService.updateShop(userDto);
-		if (Objects.nonNull(userDto)) {
-			jwtToken = JwtTokenUtils.generateToken(updatedUser);
-			if (!DtsUtils.isNullOrEmpty(jwtToken)) {
-				updatedUser.setAuthenticationToken(jwtToken);
-			}
-			message = "Shop details updated successfully";
-			LOGGER.info("User {} shop updated successfully", userDto.getUserName());
-			ApiResponse<UserDto> userResponse = new ApiResponse<>();
-			userResponse.setHttpStatus(HttpStatus.OK.value());
-			userResponse.setMessage(message);
-			userResponse.setResult(updatedUser);
-			responseEntity = ResponseEntity.ok().body(userResponse);
+		jwtToken = jwtTokenUtils.generateToken(updatedUser);
+		if (!DtsUtils.isNullOrEmpty(jwtToken)) {
+			updatedUser.setAuthenticationToken(jwtToken);
 		}
+		message = "Shop details updated successfully";
+		LOGGER.info("User {} shop updated successfully", userDto.getUserName());
+		ApiResponse<UserDto> userResponse = new ApiResponse<>();
+		userResponse.setHttpStatus(HttpStatus.OK.value());
+		userResponse.setMessage(message);
+		userResponse.setResult(updatedUser);
+		responseEntity = ResponseEntity.ok().body(userResponse);
 		return responseEntity;
 	}
 

@@ -12,6 +12,7 @@ public class AndroidAppDto {
 	private List<String> improvementList;
 
 	public AndroidAppDto() {
+		super();
 	}
 
 	public String getAppName() {

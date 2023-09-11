@@ -31,7 +31,6 @@ import com.mazzee.dts.service.MeasurementService;
 public class DressDtoMapper {
 	private final DtsModelMapper dtsModelMapper;
 	private MeasurementDtoMapper measurementDtoMapper;
-//	private DressTypeDtoMapper dressTypeDtoMapper;
 	private UserDressTypeDtoMapper userDressTypeDtoMapper;
 	private MeasurementService measurementService;
 	private CustomerService customerService;
@@ -53,11 +52,6 @@ public class DressDtoMapper {
 		this.measurementDtoMapper = measurementDtoMapper;
 	}
 
-//	@Autowired
-//	public void setDressTypeDtoMapper(DressTypeDtoMapper dressTypeDtoMapper) {
-//		this.dressTypeDtoMapper = dressTypeDtoMapper;
-//	}
-
 	@Autowired
 	public void setMeasurementService(MeasurementService measurementService) {
 		this.measurementService = measurementService;
@@ -77,11 +71,11 @@ public class DressDtoMapper {
 
 		modelMapper.typeMap(Dress.class, DressDto.class).addMappings(mapper -> {
 			mapper.map(Dress::getDressId, DressDto::setDressId);
-			mapper.using(dateConverter).map(s -> s.getOrderDate(), DressDto::setOrderDate);
-			mapper.using(timeConverter).map(s -> s.getOrderDate(), DressDto::setOrderTime);
+			mapper.using(dateConverter).map(Dress::getOrderDate, DressDto::setOrderDate);
+			mapper.using(timeConverter).map(Dress::getOrderDate, DressDto::setOrderTime);
 			mapper.map(Dress::getUserDressType, DressDto::setDressType);
-			mapper.using(dateConverter).map(s -> s.getDeliveryDate(), DressDto::setDeliveryDate);
-			mapper.using(timeConverter).map(s -> s.getDeliveryDate(), DressDto::setDeliveryTime);
+			mapper.using(dateConverter).map(Dress::getDeliveryDate, DressDto::setDeliveryDate);
+			mapper.using(timeConverter).map(Dress::getDeliveryDate, DressDto::setDeliveryTime);
 			mapper.map(Dress::getDeliveryStatus, DressDto::setDeliveryStatus);
 			mapper.map(Dress::getNumberOfDress, DressDto::setNumberOfDress);
 			mapper.map(Dress::getPrice, DressDto::setPrice);

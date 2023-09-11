@@ -30,7 +30,7 @@ import com.mazzee.dts.utils.DtsUtils;
  */
 @Service
 public class UserService {
-	private final static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
 	private UserRepo userRepo;
 	private UserDtoMapper userDtoMapper;

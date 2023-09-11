@@ -18,7 +18,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class DemoTailorShopApplication implements CommandLineRunner {
-	private final static Logger LOGGER = LoggerFactory.getLogger(DemoTailorShopApplication.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DemoTailorShopApplication.class);
 
 	public static void main(String[] args) {
 		LOGGER.info("Demo tailor application started");

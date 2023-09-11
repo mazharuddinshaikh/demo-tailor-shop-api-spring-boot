@@ -19,7 +19,7 @@ import com.mazzee.dts.utils.MeasurementImageUtil;
 
 @Service
 public class MeasurementImageService {
-	private final static Logger LOGGER = LoggerFactory.getLogger(MeasurementImageService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MeasurementImageService.class);
 	private MeasurementImageRepo measurementImageRepo;
 	private DtsImageProperties dtsImageProperties;
 	private FileOperationService fileOperationService;

@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,8 +23,12 @@ import org.springframework.web.multipart.MultipartFile;
 public final class DtsUtils {
 	public static final String EMAIL_REGEX = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 	public static final int MINIMUM_PASSWORD_LENGTH = 6;
-	public static final String DATE_FORMAT_1 = "dd/MMM/yyyy"; 
+	public static final String DATE_FORMAT_1 = "dd/MMM/yyyy";
 	public static final String DATE_FORMAT_2 = "yyyyMMdd";
+
+	private DtsUtils() {
+		super();
+	}
 
 	public static <E> boolean isNullOrEmpty(Collection<E> collection) {
 		return getResultFromFunction(collection, s -> Objects.isNull(s) || s.isEmpty());
@@ -79,33 +82,29 @@ public final class DtsUtils {
 	}
 
 	public static String getImagePath(String... pathList) {
-		String path = "";
+		StringBuilder path = new StringBuilder();
 		if (isNullOrEmpty(pathList)) {
 			return getImagePath();
 		}
 		for (String s : pathList) {
-			path += s + "/";
+			path.append(s).append("/");
 		}
-		path += getImagePath();
-		return path;
+		path.append(getImagePath());
+		return path.toString();
 	}
 
 	public static LocalDateTime convertStringToDate(String date, String format) {
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(format);
 		LocalDate parsedLocalDate = LocalDate.parse(date, dateTimeFormatter);
-		LocalDateTime localDateTime = LocalDateTime.of(parsedLocalDate, getCurrentDateTime().toLocalTime());
-		return localDateTime;
+		return LocalDateTime.of(parsedLocalDate, getCurrentDateTime().toLocalTime());
 	}
 
-	
 	public static String convertDateToString(LocalDate localDate, String format) {
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(format);
-		final String currentDate = dateFormat.format(localDate);
-		return currentDate;
+		return dateFormat.format(localDate);
 	}
-	
+
 	public static List<MultipartFile> getMeasurementMultipartFiles(List<MultipartFile> files, String startName) {
-		return files.stream().filter(file -> file.getOriginalFilename().startsWith(startName))
-				.collect(Collectors.toList());
+		return files.stream().filter(file -> file.getOriginalFilename().startsWith(startName)).toList();
 	}
 }

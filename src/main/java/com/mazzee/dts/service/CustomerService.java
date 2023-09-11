@@ -28,7 +28,7 @@ import com.mazzee.dts.utils.DtsUtils;
  */
 @Service
 public class CustomerService {
-	private final static Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
 	private final CustomerRepo customerRepository;
 	private CustomerDtoMapper customerDtoMapper;
 
@@ -44,8 +44,7 @@ public class CustomerService {
 
 	public Optional<Customer> getCustomerById(int customerId) {
 		LOGGER.info("get customer by id {}", customerId);
-		Optional<Customer> customer = customerRepository.findById(customerId);
-		return customer;
+		return customerRepository.findById(customerId);
 	}
 
 	public CustomerDto getCustomerDto(Customer customer) {

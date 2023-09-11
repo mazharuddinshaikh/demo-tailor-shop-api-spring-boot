@@ -30,12 +30,12 @@ import com.mazzee.dts.utils.DtsUtils;
  */
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-	private final static Logger LOGGER = LoggerFactory.getLogger(JwtRequestFilter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JwtRequestFilter.class);
 	private static final String BEARER = "Bearer ";
 	private static final String AUTHORIZATION_HEADER = "Authorization";
 
 	private JwtTokenUtils jwtTokenUtils;
-	private UserDetailsService UserDetailsService;
+	private UserDetailsService userDetailsService;
 
 	@Autowired
 	public void setJwtTokenUtils(JwtTokenUtils jwtTokenUtils) {
@@ -44,14 +44,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 	@Autowired
 	public void setUserDetailsService(UserDetailsService userDetailsService) {
-		UserDetailsService = userDetailsService;
+		this.userDetailsService = userDetailsService;
 	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		final String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
-		final BiPredicate<String, String> biPredicate = (s1, s2) -> s1.equalsIgnoreCase(s2);
+		final BiPredicate<String, String> biPredicate = String::equalsIgnoreCase;
 		String userNameOfToken = null;
 		String jwtToken = null;
 		boolean isValidToken = false;
@@ -62,11 +62,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		}
 
 		if (!DtsUtils.isNullOrEmpty(userNameOfToken)) {
-			UserDetails userDetails = UserDetailsService.loadUserByUsername(userNameOfToken);
+			UserDetails userDetails = userDetailsService.loadUserByUsername(userNameOfToken);
 			if (Objects.nonNull(userDetails)) {
 				isValidToken = biPredicate.test(userNameOfToken, userDetails.getUsername());
 			}
-			
+
 			if (isValidToken) {
 				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
 						userDetails, null, userDetails.getAuthorities());
