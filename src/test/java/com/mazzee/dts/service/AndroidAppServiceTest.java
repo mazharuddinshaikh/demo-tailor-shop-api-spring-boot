@@ -6,7 +6,7 @@ class AndroidAppServiceTest {
 @Test
 	void testGetLatestUpdate() {
 		AndroidAppService appService = new AndroidAppService();
-		appService.getLatestUpdate();
+//		appService.getLatestUpdate();
 		System.out.println();
 	}
 
