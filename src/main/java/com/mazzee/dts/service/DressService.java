@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
@@ -43,7 +42,7 @@ import com.mazzee.dts.utils.DtsUtils;
  */
 @Service
 public class DressService {
-	private final static Logger LOGGER = LoggerFactory.getLogger(DressService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DressService.class);
 	private UserService userService;
 	private DressRepo dressRepo;
 	private CustomerService customerService;
@@ -117,7 +116,7 @@ public class DressService {
 			pageDress = dressRepo.getDressListByUserAndDressType(userId, dressType, PageRequest.of(offset, limit));
 		}
 		if (Objects.nonNull(pageDress)) {
-			dressList = pageDress.get().collect(Collectors.toList());
+			dressList = pageDress.get().toList();
 			dressDtoList = getDressDtoList(dressList);
 		}
 		return dressDtoList;
@@ -144,7 +143,7 @@ public class DressService {
 				dressDtoList = dressDtoList.stream().map(dress -> {
 					dress.setCustomer(null);
 					return dress;
-				}).collect(Collectors.toList());
+				}).toList();
 			}
 //		get invoice of customer
 			Optional<Invoice> invoice = invoiceService.getInvoiceByCustomerId(customerId);
@@ -168,8 +167,7 @@ public class DressService {
 		LOGGER.info("Converting entity list to dto");
 		List<DressDto> dressDtoList = null;
 		if (!DtsUtils.isNullOrEmpty(dressList)) {
-			dressDtoList = dressList.stream().map(dress -> dressDtoMapper.getDressDto(dress))
-					.collect(Collectors.toList());
+			dressDtoList = dressList.stream().map(dress -> dressDtoMapper.getDressDto(dress)).toList();
 		}
 		return dressDtoList;
 	}
@@ -183,18 +181,13 @@ public class DressService {
 		Customer customer = null;
 		Invoice invoice = null;
 		boolean isDressDetailUpdated = false;
-		User user = null;
 		CustomerDto customerDto = dressDetailDto.getCustomer();
 		InvoiceDto invoiceDto = dressDetailDto.getCustomerInvoice();
 		Optional<User> userOptional = userService.getUserByUserId(userId);
 
-		if (userOptional.isPresent()) {
-			user = userOptional.get();
-		}
-
 //		update customer
-		if (Objects.nonNull(customerDto)) {
-			customer = customerService.updateCustomer(customerDto, user);
+		if (Objects.nonNull(customerDto) && userOptional.isPresent()) {
+			customer = customerService.updateCustomer(customerDto, userOptional.get());
 		}
 		if (Objects.nonNull(customer)) {
 			LOGGER.info("Customer  details updated successfully");
@@ -204,43 +197,19 @@ public class DressService {
 		List<DressDto> dressDtoList = dressDetailDto.getDressList();
 		if (!DtsUtils.isNullOrEmpty(dressDtoList)) {
 			for (DressDto dressDto : dressDtoList) {
-				Optional<Dress> optionalDress = getDressByDressId(dressDto.getDressId());
-				Dress dress = null;
-				if (optionalDress.isPresent()) {
-					LOGGER.info("Updating dress {}", optionalDress.get().getDressId());
-					dress = getUpdatedDress(optionalDress.get(), dressDto, customer);
-				} else {
-					LOGGER.info("Adding new dress");
-					dress = getUpdatedDress(null, dressDto, customer);
-				}
+				Dress dress = getUpdatedDress(dressDto, customer);
 				dress = dressRepo.save(dress);
 				if (Objects.isNull(dress)) {
 					isDressDetailUpdated = false;
 				} else {
-					int numberOfDress = dress.getNumberOfDress();
-					if (Objects.nonNull(dress.getUserDressType())) {
-						if (numberOfDress > 0) {
-							billAmount += numberOfDress * dress.getUserDressType().getPrice();
-						} else {
-							billAmount += dress.getUserDressType().getPrice();
-						}
-						discountedAmount += dress.getDiscountedPrice();
-					}
+					billAmount += getBillAmount(dress);
+					discountedAmount += dress.getDiscountedPrice();
 				}
 			}
 		}
 //		update invoice
-		if (Objects.nonNull(invoiceDto)) {
-			if (invoiceDto.getBillAmount() <= 0) {
-				invoiceDto.setBillAmount(billAmount);
-			}
-			if (invoiceDto.getDiscountedAmount() <= 0) {
-				invoiceDto.setDiscountedAmount(discountedAmount);
-			}
-		}
-
 		if (Objects.nonNull(invoiceDto) && isDressDetailUpdated) {
-			invoice = invoiceService.updateInvoice(invoiceDto, customer);
+			invoice = updateInvoice(invoiceDto, customer, billAmount, discountedAmount);
 		}
 		if (Objects.nonNull(invoice)) {
 			LOGGER.info("invoice  details updated successfully");
@@ -252,14 +221,96 @@ public class DressService {
 		return customerId;
 	}
 
-	private Dress getUpdatedDress(Dress dress, DressDto dressDto, Customer customer) {
-		Measurement measurement = null;
-		if (Objects.isNull(dress)) {
+	private double getBillAmount(Dress dress) {
+		return dress.getNumberOfDress() > 0 ? dress.getNumberOfDress() * dress.getUserDressType().getPrice()
+				: dress.getUserDressType().getPrice();
+	}
+
+	private Invoice updateInvoice(InvoiceDto invoiceDto, Customer customer, double billAmount,
+			double discountedAmount) {
+		if (invoiceDto.getBillAmount() <= 0) {
+			invoiceDto.setBillAmount(billAmount);
+		}
+		if (invoiceDto.getDiscountedAmount() <= 0) {
+			invoiceDto.setDiscountedAmount(discountedAmount);
+		}
+		return invoiceService.updateInvoice(invoiceDto, customer);
+	}
+
+	private Dress getUpdatedDress(DressDto dressDto, Customer customer) {
+		Dress dress = getDressInstanceById(dressDto.getDressId());
+		Measurement measurement = getMeasurementInstance(dress);
+		dress.setMeasurement(measurement);
+		if (Objects.nonNull(dressDto.getDressType())) {
+			Optional<UserDressType> userDressType = userDressTypeService
+					.getUserDressTypeByUserDressTypeId(dressDto.getDressType().getUserDressTypeId());
+			if (userDressType.isPresent()) {
+				dress.setUserDressType(userDressType.get());
+			}
+		}
+		dress.setOrderDate(getOrderDate(dressDto.getOrderDate(), customer));
+		dress.setDeliveryDate(getDeliveryDate(dressDto.getDeliveryDate(), customer));
+		if (DtsUtils.isNullOrEmpty(dressDto.getDeliveryStatus())) {
+			dressDto.setDeliveryStatus("UNDELIVERED");
+		}
+		dress.setDeliveryStatus(dressDto.getDeliveryStatus());
+		if (dressDto.getNumberOfDress() != 0) {
+			dress.setNumberOfDress(dressDto.getNumberOfDress());
+		} else {
+			dress.setNumberOfDress(1);
+		}
+		dress.setPrice(dressDto.getPrice());
+		if (dressDto.getDiscountedPrice() != 0) {
+			dress.setDiscountedPrice(dressDto.getDiscountedPrice());
+		} else {
+			dress.setDiscountedPrice(dressDto.getPrice());
+		}
+		dress.setPaymentStatus(dressDto.getPaymentStatus());
+		dress.setUpdatedAt(LocalDateTime.now());
+		dress.setComment(dressDto.getComment());
+		dress.setCustomer(customer);
+		return dress;
+
+	}
+
+	private LocalDateTime getDeliveryDate(String deliveryDate, Customer customer) {
+		if (!DtsUtils.isNullOrEmpty(deliveryDate)) {
+			return DtsUtils.convertStringToDate(deliveryDate, DtsUtils.DATE_FORMAT_1);
+		} else {
+			if (Objects.nonNull(customer) && Objects.nonNull(customer.getDeliveryDate())) {
+				return customer.getDeliveryDate();
+			}
+		}
+		return null;
+	}
+
+	private LocalDateTime getOrderDate(String orderDate, Customer customer) {
+		if (!DtsUtils.isNullOrEmpty(orderDate)) {
+			return DtsUtils.convertStringToDate(orderDate, DtsUtils.DATE_FORMAT_1);
+		} else {
+			if (Objects.nonNull(customer) && Objects.nonNull(customer.getOrderDate())) {
+				return customer.getOrderDate();
+			}
+		}
+		return null;
+	}
+
+	private Dress getDressInstanceById(int dressId) {
+		Optional<Dress> optionalDress = getDressByDressId(dressId);
+		Dress dress = null;
+		if (optionalDress.isPresent()) {
+			LOGGER.info("Updating dress {}", optionalDress.get().getDressId());
+			dress = optionalDress.get();
+		} else {
+			LOGGER.info("Adding new dress");
 			dress = new Dress();
 			dress.setCreatedAt(LocalDateTime.now());
-		} else {
-			measurement = dress.getMeasurement();
 		}
+		return dress;
+	}
+
+	private Measurement getMeasurementInstance(Dress dress) {
+		Measurement measurement = dress.getMeasurement();
 		if (Objects.nonNull(measurement)) {
 			measurement.setUpdatedAt(LocalDateTime.now());
 		} else {
@@ -268,54 +319,7 @@ public class DressService {
 			measurement.setCreatedAt(LocalDateTime.now());
 			measurement.setUpdatedAt(LocalDateTime.now());
 		}
-		dress.setMeasurement(measurement);
-		if (Objects.nonNull(dressDto)) {
-			if (Objects.nonNull(dressDto.getDressType())) {
-				Optional<UserDressType> userDressType = userDressTypeService
-						.getUserDressTypeByUserDressTypeId(dressDto.getDressType().getUserDressTypeId());
-				if (userDressType.isPresent()) {
-					dress.setUserDressType(userDressType.get());
-				}
-			}
-			if (!DtsUtils.isNullOrEmpty(dressDto.getOrderDate())) {
-				LocalDateTime orderDate = DtsUtils.convertStringToDate(dressDto.getOrderDate(), DtsUtils.DATE_FORMAT_1);
-				dress.setOrderDate(orderDate);
-			} else {
-				if (Objects.nonNull(customer) && Objects.nonNull(customer.getOrderDate())) {
-					dress.setOrderDate(customer.getOrderDate());
-				}
-			}
-			if (!DtsUtils.isNullOrEmpty(dressDto.getDeliveryDate())) {
-				LocalDateTime deliveryDate = DtsUtils.convertStringToDate(dressDto.getDeliveryDate(),
-						DtsUtils.DATE_FORMAT_1);
-				dress.setDeliveryDate(deliveryDate);
-			} else {
-				if (Objects.nonNull(customer) && Objects.nonNull(customer.getDeliveryDate())) {
-					dress.setDeliveryDate(customer.getDeliveryDate());
-				}
-			}
-			if (DtsUtils.isNullOrEmpty(dressDto.getDeliveryStatus())) {
-				dressDto.setDeliveryStatus("UNDELIVERED");
-			}
-			dress.setDeliveryStatus(dressDto.getDeliveryStatus());
-			if (dressDto.getNumberOfDress() != 0) {
-				dress.setNumberOfDress(dressDto.getNumberOfDress());
-			} else {
-				dress.setNumberOfDress(1);
-			}
-			dress.setPrice(dressDto.getPrice());
-			if (dressDto.getDiscountedPrice() != 0) {
-				dress.setDiscountedPrice(dressDto.getDiscountedPrice());
-			} else {
-				dress.setDiscountedPrice(dressDto.getPrice());
-			}
-			dress.setPaymentStatus(dressDto.getPaymentStatus());
-			dress.setUpdatedAt(LocalDateTime.now());
-			dress.setComment(dressDto.getComment());
-			dress.setCustomer(customer);
-		}
-		return dress;
-
+		return null;
 	}
 
 	public Optional<Dress> getDressByDressId(int dressId) {
@@ -323,49 +327,31 @@ public class DressService {
 		return dressRepo.getDressById(dressId);
 	}
 
+	/**
+	 * @param userId
+	 * @param customerId
+	 * @param files      - file names must come in
+	 *                   D_dressid_measurementtype_incrementnumber.extension
+	 * @return
+	 */
 	@Transactional(value = TxType.REQUIRED, rollbackOn = { SQLException.class })
 	public boolean updateDressImage(int userId, int customerId, List<MultipartFile> files) {
 		LOGGER.info("Update dress images");
 		boolean isDressImagesUpdated = false;
-
-		Set<Integer> dressIdList = null;
-		if (!DtsUtils.isNullOrEmpty(files)) {
-//			file names must come in D_dressid_measurementtype_incrementnumber.extension
-			for (MultipartFile multipartFile : files) {
-				int dressId = 0;
-				dressIdList = new HashSet<>();
-				String fileName = multipartFile.getOriginalFilename();
-				String[] splitNames = fileName.split("_");
-				dressId = Integer.parseInt(splitNames[1].substring(0));
-				dressIdList.add(dressId);
-			}
-		}
+		Set<Integer> dressIdList = getDressIdList(files);
 		LOGGER.info(" dress ids {}", dressIdList);
 		if (!DtsUtils.isNullOrEmpty(dressIdList)) {
 			for (int dressId : dressIdList) {
 				LOGGER.info("Updating dress images of dress is {}", dressId);
-				Measurement measurement = null;
 				Optional<Dress> optionalDress = getDressByDressId(dressId);
-				Dress dress = null;
 				if (optionalDress.isPresent()) {
-					dress = optionalDress.get();
-					measurement = dress.getMeasurement();
-					if (Objects.isNull(measurement)) {
-						measurement = new Measurement();
-						measurement.setDress(optionalDress.get());
-					}
+					Dress dress = optionalDress.get();
 					List<MultipartFile> dressIdFiles = DtsUtils.getMeasurementMultipartFiles(files,
 							DtsConstant.DRESS + DtsConstant.UNDERSCORE + dressId);
 					if (!DtsUtils.isNullOrEmpty(dressIdFiles)) {
-						measurement.setUpdatedAt(LocalDateTime.now());
-						measurement = measurementService.updateMeasurement(measurement);
-						LOGGER.info("Image found for dress id {}", dressId);
-						measurementImageService.uploadMeasurementImage(files, measurement, userId, dress);
-						if (Objects.nonNull(measurement)) {
-							isDressImagesUpdated = true;
-							LOGGER.info("measurement updated successfully for measurement id {} and dress id {}",
-									measurement.getMeasurementId(), dressId);
-						}
+						Measurement measurement = updateMeasurement(dress);
+						dress.setMeasurement(measurement);
+						isDressImagesUpdated = updateMeasurementImage(dress, files, userId);
 					}
 				} else {
 					LOGGER.info("Dress not found for dress id {}", dressId);
@@ -373,6 +359,48 @@ public class DressService {
 			}
 		}
 		return isDressImagesUpdated;
+	}
+
+	private Measurement updateMeasurement(Dress dress) {
+		Measurement measurement = dress.getMeasurement();
+		if (Objects.isNull(measurement)) {
+			measurement = new Measurement();
+			measurement.setDress(dress);
+		}
+		measurement.setUpdatedAt(LocalDateTime.now());
+		measurement = measurementService.updateMeasurement(measurement);
+		return measurement;
+	}
+
+	private boolean updateMeasurementImage(Dress dress, List<MultipartFile> files, int userId) {
+		boolean isDressImagesUpdated = false;
+		LOGGER.info("Image found for dress id {}", dress.getDressId());
+		measurementImageService.uploadMeasurementImage(files, userId, dress);
+		if (Objects.nonNull(dress.getMeasurement())) {
+			isDressImagesUpdated = true;
+			LOGGER.info("measurement updated successfully for measurement id {} and dress id {}",
+					dress.getMeasurement().getMeasurementId(), dress.getDressId());
+		}
+		return isDressImagesUpdated;
+	}
+
+	private Set<Integer> getDressIdList(List<MultipartFile> files) {
+		Set<Integer> dressIdList = new HashSet<>();
+		if (!DtsUtils.isNullOrEmpty(files)) {
+//			file names must come in D_dressid_measurementtype_incrementnumber.extension
+			for (MultipartFile multipartFile : files) {
+				int dressId = 0;
+				String fileName = multipartFile.getOriginalFilename();
+				if (!DtsUtils.isNullOrEmpty(fileName)) {
+					String[] splitNames = fileName.split("_");
+					if (!DtsUtils.isNullOrEmpty(splitNames) && splitNames.length > 1) {
+						dressId = Integer.parseInt(splitNames[1]);
+						dressIdList.add(dressId);
+					}
+				}
+			}
+		}
+		return dressIdList;
 	}
 
 }

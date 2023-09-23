@@ -64,7 +64,6 @@ public class InvoiceService {
 				invoice = getUpdatedInvoice(null, invoiceDto, customer);
 			}
 			invoice = invoiceRepository.save(invoice);
-
 		}
 		return invoice;
 	}
