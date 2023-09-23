@@ -1,6 +1,6 @@
 package com.mazzee.dts.utils;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.HashMap;
@@ -35,6 +35,11 @@ class DtsUtilsTest {
 
 	@Test
 	void testIsValidEmail() {
+	}
+
+	@Test
+	void testFolderName() {
+		System.out.print(DtsUtils.getImagePath());
 	}
 
 }

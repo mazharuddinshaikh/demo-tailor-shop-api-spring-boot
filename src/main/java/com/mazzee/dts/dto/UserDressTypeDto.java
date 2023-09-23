@@ -11,6 +11,7 @@ public class UserDressTypeDto {
 	private double price;
 
 	public UserDressTypeDto() {
+		super();
 	}
 
 	public int getUserDressTypeId() {

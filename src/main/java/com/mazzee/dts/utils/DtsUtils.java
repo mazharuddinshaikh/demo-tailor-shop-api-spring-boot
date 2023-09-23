@@ -1,5 +1,8 @@
 package com.mazzee.dts.utils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -8,6 +11,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Admin
@@ -18,6 +23,12 @@ import java.util.regex.Pattern;
 public final class DtsUtils {
 	public static final String EMAIL_REGEX = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
 	public static final int MINIMUM_PASSWORD_LENGTH = 6;
+	public static final String DATE_FORMAT_1 = "dd/MMM/yyyy";
+	public static final String DATE_FORMAT_2 = "yyyyMMdd";
+
+	private DtsUtils() {
+		super();
+	}
 
 	public static <E> boolean isNullOrEmpty(Collection<E> collection) {
 		return getResultFromFunction(collection, s -> Objects.isNull(s) || s.isEmpty());
@@ -61,4 +72,39 @@ public final class DtsUtils {
 		return functionResolver.apply(value);
 	}
 
+	public static LocalDateTime getCurrentDateTime() {
+		return LocalDateTime.now();
+	}
+
+	public static String getImagePath() {
+		LocalDateTime now = getCurrentDateTime();
+		return now.getYear() + "/" + now.getMonthValue() + "/" + now.getDayOfMonth() + "/" + now.getHour();
+	}
+
+	public static String getImagePath(String... pathList) {
+		StringBuilder path = new StringBuilder();
+		if (isNullOrEmpty(pathList)) {
+			return getImagePath();
+		}
+		for (String s : pathList) {
+			path.append(s).append("/");
+		}
+		path.append(getImagePath());
+		return path.toString();
+	}
+
+	public static LocalDateTime convertStringToDate(String date, String format) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(format);
+		LocalDate parsedLocalDate = LocalDate.parse(date, dateTimeFormatter);
+		return LocalDateTime.of(parsedLocalDate, getCurrentDateTime().toLocalTime());
+	}
+
+	public static String convertDateToString(LocalDate localDate, String format) {
+		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(format);
+		return dateFormat.format(localDate);
+	}
+
+	public static List<MultipartFile> getMeasurementMultipartFiles(List<MultipartFile> files, String startName) {
+		return files.stream().filter(file -> file.getOriginalFilename().startsWith(startName)).toList();
+	}
 }

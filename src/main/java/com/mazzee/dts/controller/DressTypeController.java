@@ -31,7 +31,7 @@ import com.mazzee.dts.utils.DtsUtils;
 @RestController
 @RequestMapping("api/dressType/")
 public class DressTypeController {
-	private final static Logger LOGGER = LoggerFactory.getLogger(DressTypeController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DressTypeController.class);
 	private DressTypeService dressTypeService;
 
 	@Autowired

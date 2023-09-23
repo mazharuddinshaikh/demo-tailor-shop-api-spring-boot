@@ -24,7 +24,7 @@ import com.mazzee.dts.repo.InvoiceRepo;
  */
 @Service
 public class InvoiceService {
-	private final static Logger LOGGER = LoggerFactory.getLogger(InvoiceService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceService.class);
 	private InvoiceRepo invoiceRepository;
 	private InvoiceDtoMapper invoiceDtoMapper;
 
@@ -36,7 +36,7 @@ public class InvoiceService {
 	@Autowired
 	public InvoiceService(InvoiceRepo invoiceRepository) {
 		this.invoiceRepository = invoiceRepository;
-	};
+	}
 
 	public Optional<Invoice> getInvoiceByCustomerId(int customerId) {
 		LOGGER.info("Get invoice of customer {}", customerId);
@@ -64,7 +64,6 @@ public class InvoiceService {
 				invoice = getUpdatedInvoice(null, invoiceDto, customer);
 			}
 			invoice = invoiceRepository.save(invoice);
-
 		}
 		return invoice;
 	}

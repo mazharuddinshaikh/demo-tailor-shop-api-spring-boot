@@ -18,6 +18,7 @@ public class DressFilterDto {
 	private List<DressType> typeList;
 
 	public DressFilterDto() {
+		super();
 	}
 
 	public String getFilterType() {

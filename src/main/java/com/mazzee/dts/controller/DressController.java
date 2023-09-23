@@ -1,6 +1,5 @@
 package com.mazzee.dts.controller;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,7 +40,7 @@ import com.mazzee.dts.utils.DtsUtils;
 @RestController
 @RequestMapping("api/dress/")
 public class DressController {
-	private final static Logger LOGGER = LoggerFactory.getLogger(DressController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DressController.class);
 	private DressService dressService;
 
 	@Autowired
@@ -53,7 +52,7 @@ public class DressController {
 	public ResponseEntity<ApiResponse<List<DressDto>>> getDressListByUser(
 			@RequestParam(name = "dressType", required = false) List<String> dressTypes,
 			@PathVariable(name = "userId") Integer userId, @PathVariable(name = "offset") Integer offset,
-			@PathVariable(name = "limit") Integer limit) throws RecordNotFoundException, IOException {
+			@PathVariable(name = "limit") Integer limit) throws RecordNotFoundException {
 		LOGGER.info("Get dress list");
 		ResponseEntity<ApiResponse<List<DressDto>>> responseEntity = null;
 		List<DressDto> dressList = dressService.getDressListByUser(dressTypes, userId, offset, limit);

@@ -21,8 +21,6 @@ public class CustomerDto {
 	private String deliveryTime;
 	private int invoiceId;
 
-	public CustomerDto() {
-	}
 
 	public int getCustomerId() {
 		return customerId;

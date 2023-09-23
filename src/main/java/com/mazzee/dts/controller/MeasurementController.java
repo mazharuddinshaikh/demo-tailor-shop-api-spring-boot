@@ -30,7 +30,7 @@ import com.mazzee.dts.utils.DtsUtils;
 @RestController
 @RequestMapping("api/measurement/")
 public class MeasurementController {
-	private final static Logger LOGGER = LoggerFactory.getLogger(MeasurementController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MeasurementController.class);
 	private MeasurementService measurementService;
 
 	@Autowired

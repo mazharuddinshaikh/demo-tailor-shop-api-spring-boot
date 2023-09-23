@@ -1,5 +1,6 @@
 package com.mazzee.dts.dto;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -8,11 +9,15 @@ import java.util.Collection;
  * @since 1.0.0
  *
  */
-public class ApiError {
+public class ApiError implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int httpStatus;
 	private String message;
 	private Collection<String> errorList;
-	
 
 	public ApiError() {
 		super();

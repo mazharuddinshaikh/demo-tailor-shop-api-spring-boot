@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mazzee.dts.aws.AwsS3Util;
 import com.mazzee.dts.entity.Measurement;
 import com.mazzee.dts.repo.MeasurementRepo;
 import com.mazzee.dts.utils.DtsUtils;
@@ -25,18 +24,12 @@ import com.mazzee.dts.utils.DtsUtils;
  */
 @Service
 public class MeasurementService {
-	private final static Logger LOGGER = LoggerFactory.getLogger(MeasurementService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MeasurementService.class);
 	private MeasurementRepo measurementRepo;
-	private AwsS3Util awsS3Util;
 
 	@Autowired
 	public void setMeasurementRepo(MeasurementRepo measurementRepo) {
 		this.measurementRepo = measurementRepo;
-	}
-
-	@Autowired
-	public void setAwsS3Util(AwsS3Util awsS3Util) {
-		this.awsS3Util = awsS3Util;
 	}
 
 	public Optional<Measurement> getMeasureMentByDressId(Integer dressId) {
@@ -90,7 +83,7 @@ public class MeasurementService {
 	private String getImageUrl(final Measurement measurement, String measurementImge) {
 		Pattern pattern = Pattern.compile("\\|\\|");
 		Stream<String> result = null;
-		final String baseUrl = awsS3Util.getAwsS3ImageBaseUrl();
+		final String baseUrl = "";
 		if (!DtsUtils.isNullOrEmpty(measurementImge)) {
 			result = pattern.splitAsStream(measurementImge);
 		}

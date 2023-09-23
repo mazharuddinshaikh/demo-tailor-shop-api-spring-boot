@@ -13,6 +13,9 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.mazzee.dts.dto.AndroidAppDto;
@@ -20,11 +23,18 @@ import com.mazzee.dts.utils.DtsUtils;
 
 @Service
 public class AndroidAppService {
-	private static final String APP_UPDATE_PROPERTIES_PATH = "\\opt\\demo-tailor-shop\\android-app-release.properties";
+	private final static Logger LOGGER = LoggerFactory.getLogger(AndroidAppService.class);
+
+	@Value("${dts.android.app-update-properties}")
+	private String appAupdatePropertiesPath;
+
+	public void setAppAupdatePropertiesPath(String appAupdatePropertiesPath) {
+		this.appAupdatePropertiesPath = appAupdatePropertiesPath;
+	}
 
 	public AndroidAppDto getLatestUpdate() {
 		AndroidAppDto androidAppDto = null;
-		Path path = Paths.get(APP_UPDATE_PROPERTIES_PATH);
+		Path path = Paths.get(appAupdatePropertiesPath);
 		File file = path.toFile();
 		InputStream inputStream = null;
 		Properties properties = null;
@@ -32,15 +42,17 @@ public class AndroidAppService {
 			try {
 				inputStream = new FileInputStream(file);
 			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
+				LOGGER.error("Exception occurred with inputstream ", e1);
 			}
+		} else {
+			LOGGER.info("Androdi app update file not present");
 		}
 		if (Objects.nonNull(inputStream)) {
 			properties = new Properties();
 			try {
 				properties.load(inputStream);
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOGGER.error("Exception occurred with inputstream ", e);
 			}
 		}
 		if (Objects.nonNull(properties) && !properties.isEmpty()) {

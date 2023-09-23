@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +29,7 @@ import com.mazzee.dts.utils.DtsUtils;
  */
 @Service
 public class DressTypeService {
-	private final static Logger LOGGER = LoggerFactory.getLogger(DressTypeService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DressTypeService.class);
 	private DressTypeRepo dressTypeRepo;
 	private DressTypeDtoMapper dressTypeDtoMapper;
 
@@ -41,8 +40,7 @@ public class DressTypeService {
 
 	public List<DressType> getAllDressTypes() {
 		LOGGER.info("Get all dress types ");
-		List<DressType> dressTypeList = dressTypeRepo.getAllDressTypes();
-		return dressTypeList;
+		return dressTypeRepo.getAllDressTypes();
 	}
 
 	public List<DressFilterDto> getAllFilterList() {
@@ -61,7 +59,7 @@ public class DressTypeService {
 			DressType dresstype = new DressType();
 			dresstype.setTypeName(status);
 			return dresstype;
-		}).collect(Collectors.toList()));
+		}).toList());
 		filterlist.add(dressTypeFilterStatus);
 
 		DressFilterDto dressTypeFilterMonth = new DressFilterDto();
@@ -71,7 +69,7 @@ public class DressTypeService {
 			DressType dresstype = new DressType();
 			dresstype.setTypeName(status);
 			return dresstype;
-		}).collect(Collectors.toList()));
+		}).toList());
 		filterlist.add(dressTypeFilterMonth);
 
 		DressFilterDto dressTypeFilterYear = new DressFilterDto();
@@ -81,7 +79,7 @@ public class DressTypeService {
 			DressType dresstype = new DressType();
 			dresstype.setTypeName(status);
 			return dresstype;
-		}).collect(Collectors.toList()));
+		}).toList());
 		filterlist.add(dressTypeFilterYear);
 		return filterlist;
 	}
@@ -111,7 +109,7 @@ public class DressTypeService {
 		List<DressTypeDto> dressTypeDtoList = null;
 		if (!DtsUtils.isNullOrEmpty(dressTypeList)) {
 			dressTypeDtoList = dressTypeList.stream().map(dressType -> dressTypeDtoMapper.getDressTypeDto(dressType))
-					.collect(Collectors.toList());
+					.toList();
 		}
 		return dressTypeDtoList;
 	}

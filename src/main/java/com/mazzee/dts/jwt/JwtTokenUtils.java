@@ -26,7 +26,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
  *
  */
 public final class JwtTokenUtils {
-	private final static Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtils.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtils.class);
 	@Value("${dts.jwt.secret.key}")
 	private String secretKey;
 	@Value("${dts.jwt.secret.issuer}")
@@ -62,7 +62,7 @@ public final class JwtTokenUtils {
 			jwtToken = Jwts.builder().addClaims(claims).setSubject(subject).setIssuedAt(new Date())
 					.setIssuer(tokenIssuer).signWith(SignatureAlgorithm.HS256, secretKey).compact();
 		} catch (final MalformedJwtException e) {
-			LOGGER.error("token constructed incorrectly {} ", e);
+			LOGGER.error("token constructed incorrectly ", e);
 		}
 
 		return jwtToken;
@@ -101,7 +101,7 @@ public final class JwtTokenUtils {
 			try {
 				t = claimResolver.apply(claims);
 			} catch (final JwtException e) {
-				LOGGER.error("Exception occured while retrieving claim from token {}", e);
+				LOGGER.error("Exception occured while retrieving claim from token ", e);
 			}
 		}
 		return t;

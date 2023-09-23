@@ -7,7 +7,12 @@ package com.mazzee.dts.utils;
  * @author Admin
  *
  */
-public class DtsConstant {
+public final class DtsConstant {
+
+	private DtsConstant() {
+		super();
+	}
+
 	public static final String FILTER_BY_DRESS_TYPE = "DT";
 	public static final String FILTER_BY_DRESS_STATUS = "DS";
 	public static final String FILTER_BY_DRESS_MONTH = "DM";

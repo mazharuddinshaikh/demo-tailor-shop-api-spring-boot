@@ -1,32 +1,17 @@
 package com.mazzee.dts.mapper;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mazzee.dts.dto.DressDto;
 import com.mazzee.dts.dto.DressTypeDto;
-import com.mazzee.dts.dto.MeasurementDto;
-import com.mazzee.dts.entity.Dress;
 import com.mazzee.dts.entity.DressType;
-import com.mazzee.dts.entity.Measurement;
 import com.mazzee.dts.entity.User;
-import com.mazzee.dts.utils.DtsUtils;
 
 @Service
 public class DressTypeDtoMapper {
-	private final DtsModelMapper dtsModelMapper;
-
-	@Autowired
-	public DressTypeDtoMapper(DtsModelMapper dtsModelMapper) {
-		this.dtsModelMapper = dtsModelMapper;
-	}
 
 	private ModelMapper getDressTypeToDtoMapper() {
 		ModelMapper modelMapper = new ModelMapper();

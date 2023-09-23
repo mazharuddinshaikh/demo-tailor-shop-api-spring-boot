@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +21,7 @@ import com.mazzee.dts.utils.DtsUtils;
 
 @Service
 public class UserDressTypeService {
-	private final static Logger LOGGER = LoggerFactory.getLogger(UserDressTypeService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserDressTypeService.class);
 	private UserDressTypeRepo userDressTypeRepo;
 	private UserDressTypeDtoMapper userDressTypeDtoMapper;
 	private DressTypeService dressTypeService;
@@ -90,8 +89,8 @@ public class UserDressTypeService {
 	public List<UserDressTypeDto> getUserDressTypeDtoList(List<UserDressType> userDressTypeList) {
 		List<UserDressTypeDto> userDressTypeDtoList = null;
 		if (!DtsUtils.isNullOrEmpty(userDressTypeList)) {
-			userDressTypeDtoList = userDressTypeList.stream().map(userDressType -> getUserDressTypeDto(userDressType))
-					.collect(Collectors.toList());
+			userDressTypeDtoList = userDressTypeList.stream().map(this::getUserDressTypeDto)
+					.toList();
 		}
 		return userDressTypeDtoList;
 	}

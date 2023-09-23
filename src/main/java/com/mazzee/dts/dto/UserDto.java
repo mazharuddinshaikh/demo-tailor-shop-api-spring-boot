@@ -3,13 +3,19 @@
  */
 package com.mazzee.dts.dto;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * @author Admin
  *
  */
-public class UserDto {
+public class UserDto implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int userId;
 	private String firstName;
 	private String middleName;

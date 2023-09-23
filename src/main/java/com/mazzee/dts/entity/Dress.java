@@ -174,8 +174,8 @@ public class Dress {
 
 	@Override
 	public String toString() {
-		return "Dress [dressId=" + dressId + ", dressType=" + userDressType + ", customer=" + customer + ", orderDate="
-				+ orderDate + ", deliveryDate=" + deliveryDate + ", deliveryStatus=" + deliveryStatus
+		return "Dress [dressId=" + dressId + ", userDressType=" + userDressType + ", customer=" + customer
+				+ ", orderDate=" + orderDate + ", deliveryDate=" + deliveryDate + ", deliveryStatus=" + deliveryStatus
 				+ ", numberOfDress=" + numberOfDress + ", price=" + price + ", discountedPrice=" + discountedPrice
 				+ ", paymentStatus=" + paymentStatus + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt
 				+ ", comment=" + comment + ", measurement=" + measurement + "]";

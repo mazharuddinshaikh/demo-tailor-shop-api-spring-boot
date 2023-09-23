@@ -24,7 +24,7 @@ import com.mazzee.dts.dto.ApiResponse;
  */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
-	private final static Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);
 
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
