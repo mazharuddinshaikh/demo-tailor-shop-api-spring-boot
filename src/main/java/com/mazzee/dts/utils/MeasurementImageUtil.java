@@ -23,9 +23,15 @@ public class MeasurementImageUtil {
 		String fileExtension = getFileExtension(multipartFile);
 		String fileName = getFileNameFormat(userId, dress, measurementType);
 		List<MeasurementImage> list = measurement.getMeasurementImageList();
-		List<String> rawList = list.stream().filter(img -> img.getImageType().equalsIgnoreCase(measurementType))
-				.map(img -> img.getImageName()).toList();
-		int i = getIncrementCounter(rawList, fileName);
+		List<String> rawList = null;
+		int i = 1;
+		if (!DtsUtils.isNullOrEmpty(list)) {
+			rawList = list.stream().filter(img -> img.getImageType().equalsIgnoreCase(measurementType))
+					.map(img -> img.getImageName()).toList();
+		}
+		if (!DtsUtils.isNullOrEmpty(rawList)) {
+			i = getIncrementCounter(rawList, fileName);
+		}
 		fileName = fileName + i;
 		fileName += "." + fileExtension;
 		return fileName;
