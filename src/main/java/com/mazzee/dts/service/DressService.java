@@ -365,6 +365,7 @@ public class DressService {
 		Measurement measurement = dress.getMeasurement();
 		if (Objects.isNull(measurement)) {
 			measurement = new Measurement();
+			measurement.setCreatedAt(LocalDateTime.now());
 			measurement.setDress(dress);
 		}
 		measurement.setUpdatedAt(LocalDateTime.now());
