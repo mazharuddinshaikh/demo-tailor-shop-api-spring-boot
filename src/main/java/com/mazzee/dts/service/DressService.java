@@ -136,6 +136,15 @@ public class DressService {
 //		get dress list of customer
 			LOGGER.info("get dress list by user {} and customer {}", userId, customerId);
 			List<Dress> dressList = dressRepo.getDressListByUserIdAndCustomerId(userId, customerId);
+			if (!DtsUtils.isNullOrEmpty(dressList)) {
+				dressList = dressList.stream().map(dress -> {
+					if (dress.getMeasurement() != null) {
+						dress.getMeasurement().setMeasurementImageList(
+								measurementImageService.getMeasurementImageListByMeasurement(dress.getMeasurement()));
+					}
+					return dress;
+				}).toList();
+			}
 			dressDtoList = getDressDtoList(dressList);
 //			remove customer object from dress list
 			if (!DtsUtils.isNullOrEmpty(dressDtoList)) {
@@ -202,6 +211,7 @@ public class DressService {
 				if (Objects.isNull(dress)) {
 					isDressDetailUpdated = false;
 				} else {
+					updateMeasurement(dress);
 					billAmount += getBillAmount(dress);
 					discountedAmount += dress.getDiscountedPrice();
 				}

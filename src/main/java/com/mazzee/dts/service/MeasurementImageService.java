@@ -39,6 +39,11 @@ public class MeasurementImageService {
 		this.fileOperationService = fileOperationService;
 	}
 
+	
+	public List<MeasurementImage> getMeasurementImageListByMeasurement(Measurement measurement) {
+		return measurementImageRepo.findByMeasurement(measurement);
+	}
+
 	public void uploadMeasurementImage(List<MultipartFile> files, int userId, Dress dress) {
 		Measurement measurement = dress.getMeasurement();
 		List<MultipartFile> rawImageList = DtsUtils.getMeasurementMultipartFiles(files, DtsConstant.DRESS
